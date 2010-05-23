@@ -9,7 +9,7 @@
         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
         onload="onLoad()" persist="width">
 	<script type="text/javascript" src="chrome://bgmfox/content/bgmfox.js" />
-	<script type="text/javascript" src="chrome://bgmfox/content/jquery-1.3.2.min.js" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js" />
 
 	<commandset>
 		<!--Control-->
@@ -216,7 +216,7 @@
 							<hbox align="center">
 								<label id="lblCurrentTime" class="time" value="&currentTimeLbl.value;" />
 								<stack>
-									<image id="imgProgress" top="5" />
+									<image id="imgProgress" top="4" />
 									<box id="bxProgress">
 										<scale id="sclProgress" orient="horizontal" value="0"
 										       onchange="videoManager.seekTo(event)" movetoclick="true" />
@@ -241,7 +241,7 @@
 			         maxrows="10" completeselectedindex="true" showcommentcolumn="true" tabscrolling="true"
 			         sizetopopup="pref" src="" emptytext="&searchTxtbx.emptytext;" empty="true"
 			         label="&searchTxtbx.label;" tooltiptext="&searchTxtbx.tooltiptext;" clickSelectsAll="true"
-			         onkeyup="onKeyup(event)">
+				 onkeyup="onKeyup(event)">
 				<hbox>
 					<image id="imgSearch" tooltiptext="&searchImg.tooltiptext;" onclick="videoManager.searchVideo()" />
 				</hbox>
@@ -270,7 +270,7 @@
 		</hbox>
 
 		<!--Browser-->
-		<browser id="nicoBrowser" height="100" type="content" src="http://suplik.net/bgmfox/player/bgmfox-dev.html" persist="width height" />
+		<browser id="nicoBrowser" height="100" type="content" src="http://suplik.net/bgmfox/player/bgmfox-player-dev.html" persist="width height" />
 		<browser id="nicoBrowser2" type="content" />
 
 		<splitter collapse="before">
