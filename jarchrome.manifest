@@ -1,0 +1,9 @@
+content  bgmfox  jar:chrome/bgmfox.jar!/content/
+overlay  chrome://browser/content/browser.xul  chrome://bgmfox/content/firefoxOverlay.xul
+
+locale  bgmfox  en-US  jar:chrome/bgmfox.jar!/locale/en-US/
+locale  bgmfox  ja-JP  jar:chrome/bgmfox.jar!/locale/ja-JP/
+
+skin  bgmfox  classic/1.0  jar:chrome/bgmfox.jar!/skin/classic
+style  chrome://bgmfox/content/bgmfox.xul  chrome://bgmfox/skin/classic/bgmfox.css
+

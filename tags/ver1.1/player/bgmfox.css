@@ -1,0 +1,13 @@
+.hiddenElm {
+  display: none;
+}
+
+#flvplayer_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#embedYTPlayer {
+  visibility: hidden;
+}

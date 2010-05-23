@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<prefwindow id="bgmfoxPrefs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="BGM Fox Preferences">
+	<prefpane>
+		<preferences>
+			<preference id="extensions.bgmfox.niconicoLoginMail" name="extensions.bgmfox.niconicoLoginMail" type="string" />
+			<preference id="extensions.bgmfox.niconicoLoginPassword" name="extensions.bgmfox.niconicoLoginPassword" type="string" />
+		</preferences>
+		<groupbox>
+			<caption label="Niconico douga login information:" />
+			<hbox>
+				<label value="Mail:"/>
+				<textbox preference="extensions.bgmfox.niconicoLoginMail" />
+			</hbox>
+			<hbox>
+				<label value="Password:"/>
+				<textbox preference="extensions.bgmfox.niconicoLoginPassword" type="password" />
+			</hbox>
+		</groupbox>
+	</prefpane>
+</prefwindow>

@@ -1,0 +1,308 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css" ?>
+<?xml-stylesheet href="chrome://browser/skin/browser.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://bgmfox/skin/bgmfox.css" type="text/css" ?>
+<!DOCTYPE page SYSTEM "chrome://bgmfox/locale/bgmfox.dtd">
+
+<window id="wndwBGMFox" title="&bgmfox.title;"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         onload="onLoad()" >	
+	<script type="application/javascript" src="chrome://bgmfox/content/bgmfox.js"/>
+	<script type="application/javascript" src="chrome://bgmfox/content/jquery-1.3.2.min.js"/>
+
+	<popupset>
+		<!--Playlist context-->
+		<menupopup id="playlist-context">
+			<menuitem label="Add a video within the main window" oncommand="playlistsManager.addVideoWithinBrowser()"/>
+			<menuitem label="Update" oncommand="playlistsManager.updatePlaylistInfo()"/>
+			<menuitem label="Rename" oncommand="playlistsManager.renamePlaylist()"/>
+			<menuitem label="Delete" oncommand="playlistsManager.deletePlaylist()"/>
+		</menupopup>
+		
+		<!--Library context-->
+		<menupopup id="all-playlist-context">
+			<menuitem label="Add a video within the main window" oncommand="playlistsManager.addVideoWithinBrowser()"/>
+			<menuitem label="Update" oncommand="playlistsManager.updatePlaylistInfo()"/>
+		</menupopup>
+		
+		<!--Playlist content context-->
+		<menupopup id="playlistVideo-context">
+			<menuitem label="Update" oncommand="playlistsManager.onUpdateVideoInfo()"/>
+			<menuitem label="Delete" oncommand="playlistsManager.deleteVideos()"/>
+			<menuitem label="Open original site" oncommand="videoManager.openOriginalSite()"/>
+		</menupopup>
+		
+		<!--Search result context-->
+		<menupopup id="searchResultContext">
+			<menu id="addToPlaylist-context" label="Add to Playlist" datasources="rdf:null" ref="http://suplik.net/bgmfox/playlists">
+				<menupopup>
+					<menuitem label="Library" value="all" />
+				</menupopup>
+				<template>
+					<rule iscontainer="true">
+						<menupopup>
+							<menuitem uri="rdf:*" label="rdf:http://suplik.net/bgmfox/playlist#name"/>
+						</menupopup>
+					</rule>
+				</template>
+			</menu>
+			<menuitem label="Open original site" oncommand="videoManager.openOriginalSite(event)"/>
+		</menupopup>
+		
+		<!--Volume popup-->
+		<menupopup id="popupVolume" onmouseout="onPopupVolumeMouseOut(event)">
+			<scale id="sclVolume" orient="vertical" value="50" onchange="videoManager.changeVolume(event)" persist="value" movetoclick="true" />			
+		</menupopup>
+		
+		<!--Playlist popup-->
+		<menupopup id="popupPlaylist">
+			<menuitem label="New Playlist" oncommand="playlistsManager.createPlaylist()" tooltiptext="Create a playlist (Shift+Alt+N)" />
+			<menuitem label="Export Library" oncommand="exportLibrary()" />
+			<menuitem label="Import Library" oncommand="rdfManager.importLibrary()" />
+		</menupopup>
+		
+		<!--Thumbnail tooltip for a List view thumbnail-->
+		<tooltip id="tltpThumbnail">
+			<image id="imgThumbnail"/>
+		</tooltip>
+		
+		<!--Tooltip for Grid view item-->
+		<tooltip id="tltpGridViewItem">
+			<vbox>
+				<hbox>
+					<label>Added:</label>
+					<label id="lblTltpPublished" />
+				</hbox>
+				<hbox>
+					<label>Time:</label>
+					<label id="lblTltpDuration" />
+					<label>Views:</label>
+					<label id="lblTltpViews" />
+					<label>My lists:</label>
+					<label id="lblTltpFavorites" />
+				</hbox>
+				<label id="lblTltpTitle"/>
+			</vbox>
+		</tooltip>
+	</popupset>
+	
+	<!--Main panel-->
+  <vbox flex="1">
+  
+  	<!--Contorl area-->
+  	<hbox id="hbxToolbar1" align="center">
+			<image id="imgPrevious" class="previous-next-button control" onclick="videoManager.previousVideo()" tooltiptext="Previous video (Ctrl+Left)" />
+			<image id="imgPrevious_disabled" class="previous-next-button control" />
+	  	<image id="imgPlay" class="control" onclick="videoManager.playVideo()" tooltiptext="Play (Space)" />
+	  	<image id="imgPause" class="control" onclick="videoManager.pauseVideo()" tooltiptext="Pause (Space)" />
+			<image id="imgNext" class="previous-next-button control" onclick="videoManager.nextVideo()" tooltiptext="Next video (Ctrl+Right)" />
+			<image id="imgNext_disabled" class="previous-next-button control" />
+			<vbox>
+				<html:marquee id="mrqTitle" width="50px" hspace="3px" behavior="alternate" direction="right" scrollamount="1" scrolldelay="100" onclick="onMarqueeClick(event)" ondblclick="onMarqueeDblClick(event)"></html:marquee>
+				<hbox>
+					<label id="lblCurrentTime" class="time" value="0:00" />
+					<stack>
+			  		<image id="imgProgress" top="5" />
+			  		<box id="bxProgress">
+					  	<scale id="sclProgress" orient="horizontal" value="0" onchange="videoManager.seekTo(event)" movetoclick="true" />
+			  		</box>
+			  	</stack>
+			  	<label id="lblTotalTime" class="time" value="0:00" onclick="onLblTimeClick(event)" persist="style" />
+			  	<label id="lblRemainingTime" class="time" value="-0:00" onclick="onLblTimeClick(event)" persist="style" />
+				</hbox>
+			</vbox>
+			<image id="imgBuffering" />
+	  </hbox>
+	  
+   	<!--Search area-->
+	  <hbox id="hbxToolbar2" align="center">
+	  	<textbox id="txtVideoId" type="autocomplete" flex="1" autocompletepopup="PopupAutoComplete" autocompletesearch="search-autocomplete" autocompletesearchparam="searchbar-history" timeout="250" maxrows="10" completeselectedindex="true" showcommentcolumn="true" tabscrolling="true" sizetopopup="pref" src="" emptytext="Search video" empty="true" label="Search video" tooltiptext="Search video" clickSelectsAll="true" onkeyup="onKeyup(event)">
+				<hbox>
+	  			<image id="imgSearch" tooltiptext="Search" onclick="videoManager.searchVideo()" />
+	  		</hbox>
+	  	</textbox>
+	  	<menulist id="mnlSort" label="sort" persist="selectedIndex" tooltiptext="Sort by">
+			  <menupopup>
+			    <menuitem id="miPublished" class="sort" label="added" value="published" persist="selected"/>
+			    <menuitem id="miViewCount" class="sort" label="views" value="viewCount" persist="selected"/>
+			    <menuitem id="miRating" class="sort" label="my lists" value="rating" persist="selected"/>
+			  </menupopup>
+			</menulist>
+			
+	  	<spacer flex="1"/>
+	  	
+	  	<image id="imgMute" class="control mute-unmute" onclick="videoManager.mute()" tooltiptext="Mute on" onmouseover="onMuteMouseOver(event)" onmouseout="onImgMuteMouseOut(event)" />
+	  	<image id="imgUnmute" class="control mute-unmute" onclick="videoManager.unmute()" tooltiptext="Mute off" onmouseover="onMuteMouseOver(event)" onmouseout="onImgMuteMouseOut(event)" />
+	  	<image id="imgListView" class="control view" onclick="playlistsManager.changeView(event)" tooltiptext="List view" persist="style" />
+	  	<image id="imgGridView" class="control view" onclick="playlistsManager.changeView(event)" tooltiptext="Grid view" persist="style" />
+	  </hbox>
+	  
+	  <!--Browser-->
+	  <browser id="nicoBrowser" src="http://suplik.net/niconico.html" persist="width height" />
+	  <browser id="nicoBrowser2" type="content"/>
+	  
+		<splitter collapse="before">
+			<grippy/>
+		</splitter>
+		
+		<!--Playlists/Search result-->
+		<tabbox id="tbbxMainList" flex="1">
+			<tabs>
+  			<tab label="Playlists"/>
+  			<tab label="Niconico"/>
+  			<tab label="Youtube"/>
+  		</tabs>
+			<tabpanels flex="1">
+				<tabpanel flex="1">
+					<hbox flex="1" onkeyup="playlistsManager.onPlaylistsPanelKeyup(event)">
+					
+						<!--Playlists-->
+						<richlistbox id="rlbPlaylists" datasources="rdf:null" ref="http://suplik.net/bgmfox/playlists" xmlns:playlist="http://suplik.net/bgmfox/playlist#" onselect="playlistsManager.onPlaylistSelectionChanged(event)" persist="width" onkeyup="playlistsManager.onPlaylistsKeyup(event)">
+							<richlistitem value="all" ondragover="playlistsManager.playlistObserver(event)" ondrop="playlistsManager.playlistObserver(event)" ondragend="playlistsManager.playlistObserver(event)" context="all-playlist-context">
+								<label value="Library" />
+							</richlistitem>
+							<template>
+								<rule iscontainer="true">
+									<richlistitem uri="rdf:*" context="playlist-context" ondragstart="playlistsManager.playlistObserver(event)" ondragover="playlistsManager.playlistObserver(event)" ondrop="playlistsManager.playlistObserver(event)" ondragend="playlistsManager.playlistObserver(event)">
+										<label value="rdf:http://suplik.net/bgmfox/playlist#name"/>
+									</richlistitem>
+								</rule>
+							</template>
+						</richlistbox>
+						
+						<splitter id="spltrPlaylist" />
+						
+						<!--List view-->
+						<tree id="trPlaylistContents" flex="1" datasources="rdf:null" ref="" enableColumnDrag="true" onkeyup="playlistsManager.onPlaylistContentsKeyup(event)" persist="style">
+							<treecols>
+								<treecol id="trclName" class="sortDirectionIndicator" label="Title" primary="true" flex="1" sort="?title" persist="width ordinal hidden sortActive sortDirection"/>
+								<splitter class="tree-splitter"/>
+								<treecol id="trclThumbnail_url" label="Thumbnail" flex="1" persist="width ordinal hidden"/>
+								<splitter class="tree-splitter"/>
+								<treecol id="trclLength" class="sortDirectionIndicator" label="Time" flex="1" sort="?duration" persist="width ordinal hidden sortActive sortDirection"/>
+								<splitter class="tree-splitter"/>
+								<treecol id="trclFirst_retrieve" class="sortDirectionIndicator" label="Added" flex="1" sort="?published" persist="width ordinal hidden sortActive sortDirection"/>
+								<splitter class="tree-splitter"/>
+								<treecol id="trclView_counter" class="sortDirectionIndicator" label="Views" flex="1" sort="?view" persist="width ordinal hidden sortActive sortDirection"/>
+								<splitter class="tree-splitter"/>
+								<treecol id="trclMylist_counter" class="sortDirectionIndicator" label="My lists" flex="1" sort="?favorite" persist="width ordinal hidden sortActive sortDirection"/>
+							</treecols>
+							
+							
+							<template>
+								<queryset>
+									<query>
+									  <content uri="?start"/>
+									  <member container="?start" child="?video"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#id"
+									          object="?id"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#title"
+									          object="?title"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#thumbnail_url"
+									          object="?thumbnail_url"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#duration"
+									          object="?duration"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#published"
+									          object="?published"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#view"
+									          object="?view"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#favorite"
+									          object="?favorite"/>
+									</query>
+									<action>
+										<treechildren id="trChildren" ondblclick="playlistsManager.onPlayListItemDblClicked(event)" context="playlistVideo-context" ondragstart="playlistsManager.playlistContentObserver(event)" ondragover="playlistsManager.playlistContentObserver(event)" ondrop="playlistsManager.playlistContentObserver(event)" ondragend="playlistsManager.playlistContentObserver(event)" onmousemove="playlistsManager.onTooltipShowing(event)" onmouseout="playlistsManager.onTooltipShowing(event)">
+											<treeitem uri="?video" value="?id">
+												<treerow class="trrwPlContent">
+													<treecell label="?title" />
+													<treecell id="trclThumbnail" src="?thumbnail_url" properties="thumbnail" />
+													<treecell label="?duration" />
+													<treecell label="?published" />
+													<treecell label="?view" />
+													<treecell label="?favorite" />
+												</treerow>
+											</treeitem>
+										</treechildren>
+									</action>
+								</queryset>
+							</template>
+						</tree>
+						
+						<!--Grid view-->
+						<box id="bxGridView" flex="1" datasources="rdf:null" ref="" persist="style">
+						  <template>
+						  	<queryset>
+						  		<query>
+						  			<content uri="?start"/>
+									  <member container="?start" child="?video"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#id"
+									          object="?id"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#title"
+									          object="?title"/>
+									  <triple subject="?video"
+									          predicate="http://suplik.net/bgmfox/video#thumbnail_url"
+									          object="?thumbnail_url"/>
+						  		</query>
+						  		<action>
+										<html:div flex="1">
+											<vbox class="thumbnail" uri="?video" ondblclick="playlistsManager.onPlayListItemDblClicked(event)" context="playlistVideo-context" ondragstart="playlistsManager.gridViewObserver(event)" tooltip="tltpGridViewItem" onmouseover="playlistsManager.onGridViewMouseOver(event)" onkeyup="playlistsManager.onPlaylistContentsKeyup(event)">
+												<lable class="hidden_elm" value="?id"/>
+												<image class="thumbnail" src="?thumbnail_url" onfocus="gridView.onFocus(event)" />
+												<label class="thumbnail small-margin" onclick="event.target.previousSibling.focus();">
+													<textnode value="?title" />
+												</label>
+											</vbox>
+										</html:div>
+						  		</action>
+						  	</queryset>
+						  </template>
+						</box>
+					</hbox>
+				</tabpanel>
+				
+				<!--Search Results-->
+				<tabpanel flex="1">
+					<vbox flex="1">
+						<richlistbox id="rlbNiconicoSearchResult" class="searchResult" ondblclick="onSearchResultDblClicked(event)" context="searchResultContext" oncontextmenu="ContextPlaylist.setVideo(event)" onselect="videoManager.selectedItem = event.target" flex="1" />
+						<hbox align="center">
+							<button id="btnPrvNicoSrchRlt" disabled="true" label="Prev" oncommand="videoManager.previousNicoSearchResult()" tooltiptext="Previous search result" />
+							<button id="btnNxtNicoSrchRlt" disabled="true" label="Next" oncommand="videoManager.nextNicoSearchResult()" tooltiptext="Next search result" />
+							<image id="imgNiconicoSearching" class="searching" />
+						</hbox>
+					</vbox>
+  			</tabpanel>
+  			<tabpanel flex="1">
+  				<vbox flex="1">
+						<richlistbox id="rlbYoutubeSearchResult" class="searchResult" ondblclick="onSearchResultDblClicked(event)" context="searchResultContext" oncontextmenu="ContextPlaylist.setVideo(event)" onselect="videoManager.selectedItem = event.target" flex="1" />
+	  				<hbox align="center">
+	  					<button id="btnPrvYTSrchRlt" disabled="true" label="Prev" oncommand="videoManager.previousYTSearchResult()" tooltiptext="Previous search result" />
+	  					<button id="btnNxtYTSrchRlt" disabled="true" label="Next" oncommand="videoManager.nextYTSearchResult()" tooltiptext="Next search result" />
+							<image id="imgYoutubeSearching" class="searching" />
+	  				</hbox>
+  				</vbox>
+  			</tabpanel>
+  		</tabpanels>
+  	</tabbox>
+  </vbox>
+  	
+	<!--Status bar-->
+	<statusbar align="center">
+		<image id="imgCreatePlaylist" class="control" popup="popupPlaylist" tooltiptext="Create a playlist, Import/Export library"/>
+		<image id="imgNoRepeat" class="repeat control" onclick="videoManager.onRepeatClicked(event)" tooltiptext="Play playlist once" persist="style" />
+  	<image id="imgOneRepeat" class="repeat control" onclick="videoManager.onRepeatClicked(event)" tooltiptext="Repeat 1 video" persist="style" />
+  	<image id="imgAllRepeat" class="repeat control" onclick="videoManager.onRepeatClicked(event)" tooltiptext="Repeat playlist" persist="style" />
+  	<spacer/>
+  	<label id="lblStatusbar" crop="end" flex="1"/>
+		<spacer flex="1"/>
+	</statusbar>
+</window>

@@ -1,0 +1,8 @@
+*Bug List
+
+*Todo
+-create a RDF manager class
+-localize
+
+*Wish List
+-shuffle

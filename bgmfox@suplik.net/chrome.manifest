@@ -1,0 +1,7 @@
+content  bgmfox  chrome/content/
+locale  bgmfox  en-US  chrome/locale/en-US/
+locale  bgmfox  ja-JP  chrome/locale/ja-JP/
+skin  bgmfox  classic/1.0  chrome/skin/classic
+style  chrome://bgmfox/content/bgmfox.xul  chrome://bgmfox/skin/classic/bgmfox.css
+
+overlay  chrome://browser/content/browser.xul  chrome://bgmfox/content/firefoxOverlay.xul

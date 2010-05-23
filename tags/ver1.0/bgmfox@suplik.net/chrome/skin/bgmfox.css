@@ -1,0 +1,357 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+button {
+  min-width: 0px;
+  width: 40px;
+}
+
+textbox {
+  min-width: 0px;
+  width: 120px;
+}
+
+richlistbox {
+	min-height: 50px;
+}
+
+.previous-next-button {
+	width: 29px;
+	height: 27px;
+}
+
+.control {
+	margin: 3px;
+}
+
+.searching {
+	display: none;
+	list-style-image: url('images/searching.gif');
+}
+
+image.mute-unmute {
+	width: 15px;
+	height: 15px;
+	margin-left: 5px;
+}
+
+image.repeat {
+	width: 22px;
+	height: 15px;
+}
+
+image.thumbnail {
+	padding: 3px;
+	max-width: 89px;
+	max-height: 68px;
+	-moz-user-focus: normal;
+	background-color: #F0F0F0;
+}
+
+image.thumbnail:focus {
+	padding: 0px;
+	border: 3px solid #206DBB;
+}	
+
+vbox.thumbnail {
+	margin: 2px;
+	width: 90px;
+}
+
+label.thumbnail {
+	margin: 0px;
+	padding: 2px;
+	max-height: 28px;
+}
+
+image.view {
+	margin-right: 10px;
+}
+
+label.hidden_elm {
+	display: none;
+}
+
+label.time {
+	margin-left: 5px;
+	margin-right: 0px;
+	width: 25px;
+}
+
+menuitem.sort {
+	margin: 0px;
+	padding: 0px;
+}
+
+#imgProgress {
+	margin: 0px;
+	padding: 0px;
+	list-style-image: url('images/scale-tray-horiz.gif');
+	width: 100px;
+}
+
+#sclProgress {
+	margin: 0px;
+	padding: 0px;
+	min-width: 12px;
+	min-height: 15px;
+	width: 12px;
+	height: 15px;
+	max-width: 100px;
+	max-height: 15px;
+}
+
+/* ::::: scale ::::: */
+
+.scale-slider[orient="horizontal"] {
+	margin: 0px;
+	padding: 0px;
+  -moz-appearance: none !important;
+  background: url("images/scale-tray-horiz-buffering.gif") 0% 50% repeat-x;
+}
+
+/*
+.scale-slider[orient="vertical"] {
+  -moz-appearance: scale-vertical;
+  background: url("chrome://global/skin/scale/scale-tray-vert.gif") 50% 0% repeat-y;
+  margin: 4px 2px;
+  height: 100px;
+}*/
+
+/* ::::: scale thumb ::::: */
+
+.scale-thumb[orient="horizontal"] {
+  -moz-appearance: none !important;
+  border-width: 0px;
+  padding-bottom: 1px;
+  /*border: 2px solid;
+  -moz-border-top-colors: ThreeDLightShadow ThreeDHighlight;
+  -moz-border-right-colors: ThreeDDarkShadow ThreeDShadow;
+  -moz-border-bottom-colors: ThreeDDarkShadow ThreeDShadow;
+  -moz-border-left-colors: ThreeDLightShadow ThreeDHighlight;
+  background-color: -moz-Dialog;*/
+  background: url("images/scale-thumb.png") 0% 100% no-repeat;
+  min-width: 12px;
+  min-height: 15px;
+  max-width: 12x;
+  max-height: 15px;
+}
+
+/*
+.scale-thumb[orient="vertical"] {
+  -moz-appearance: scalethumb-vertical;
+  min-width: 15px;
+  min-height: 30px;
+}*/
+
+.scale-thumb[disabled="true"] {
+  -moz-border-top-colors: ThreeDHighlight ThreeDLightShadow !important;
+  -moz-border-right-colors: ThreeDDarkShadow ThreeDShadow !important;
+  -moz-border-bottom-colors: ThreeDDarkShadow ThreeDShadow !important;
+  -moz-border-left-colors: ThreeDHighlight ThreeDLightShadow !important;
+}
+
+#nicoBrowser2 {
+  display: none;
+}
+
+#imgPlay {
+	list-style-image: url('images/play.png');
+}
+
+#imgPlay:active {
+	list-style-image: url('images/play_pressed.png');
+}
+
+#imgPause {
+	display: none;
+	list-style-image: url('images/pause.png');
+}
+
+#imgPause:active {
+	list-style-image: url('images/pause_pressed.png');
+}
+
+#imgPrevious {
+	list-style-image: url('images/previous.png');
+}
+
+#imgPrevious:active {
+	list-style-image: url('images/previous_pressed.png');
+}
+
+#imgPrevious_disabled {
+	list-style-image: url('images/previous_disabled.png');
+	display: none;
+}
+
+#imgNext {
+	list-style-image: url('images/next.png');
+}
+
+#imgNext:active {
+	list-style-image: url('images/next_pressed.png');
+}
+
+#imgNext_disabled {
+	list-style-image: url('images/next_disabled.png');
+	display: none;
+}
+
+#imgMute {
+	list-style-image: url('images/mute.png');
+}
+
+#imgUnmute {
+  display: none;
+  list-style-image: url('images/unmute.png');
+}
+
+#imgNoRepeat {
+	list-style-image: url('images/no_repeat.png');
+}
+
+#imgAllRepeat {
+	list-style-image: url('images/all_repeat.png');
+	display: none;
+}
+
+#imgOneRepeat {
+	list-style-image: url('images/1_repeat.png');
+	display: none;
+}
+
+#imgSearch {
+	width: 15px;
+	height: 15px;
+	margin-right: 3px;
+	list-style-image: url('images/search.png');
+}
+
+#imgSearch:active {
+	width: 15px;
+	height: 15px;
+	margin-right: 3px;
+	list-style-image: url('images/search_pressed.png');
+}
+
+#rlbPlaylists {
+  min-width: 50px;
+  margin-right: 0px;
+}
+
+#sclVolume {
+  width: 80px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+#hbxToolbar1 {
+	min-height: 43px;
+}
+
+#hbxToolbar2 {
+	min-height: 28px;
+}
+
+#imgCreatePlaylist {
+	width: 15px;
+	height: 15px;
+	list-style-image: url('images/createPlaylist.png');
+}
+
+#imgCreatePlaylist:active {
+	list-style-image: url('images/createPlaylist_pressed.png');
+}
+
+#imgListView {
+	width: 28px;
+	height: 18px;
+	list-style-image: url('images/list_view.png');
+}
+
+#imgListView:active {
+	list-style-image: url('images/list_view_pressed.png');
+}
+
+#imgGridView {
+	display: none;
+	width: 28px;
+	height: 18px;
+	list-style-image: url('images/grid_view.png');
+}
+
+#imgGridView:active {
+	list-style-image: url('images/grid_view_pressed.png');
+}
+
+#imgBuffering {
+	list-style-image: url('images/searching.gif');
+	display: none;
+}
+
+#spltrPlaylist {
+	min-width: 0%;
+	min-height: 0%;
+	width: 1px;
+	max-width: 1px;
+}
+
+#sclVolume {
+	width: 50px;
+}
+
+#mnlSort {
+	width: 70px;
+	height: 22px;
+}
+
+#bxGridView {
+	overflow: auto;
+}
+
+#txtVideoId {
+	height: 20px;
+}
+
+#popupVolume {
+	width: 50px;
+	height: 120px;
+}
+
+#lblRemainingTime {
+	display: none;
+}
+
+treechildren::-moz-tree-row(drop-above) { border-top-width: 1px; border-top-color: -moz-dialogtext; border-top-style: solid; }
+treechildren::-moz-tree-row(drop-below) { border-bottom-width: 1px; border-bottom-color: -moz-dialogtext; border-bottom-style: solid; }
+treechildren::-moz-tree-cell-text(playing) {
+	font-weight: bold;
+	color: blue;
+}
+
+treechildren::-moz-tree-twisty {
+	margin: 0px;
+	padding: 0px;
+	width: 0px;
+	height: 0px;
+}
+
+treechildren::-moz-tree-row {
+	min-width: 0px;
+	height: 20px;
+}
+
+treechildren::-moz-tree-image(thumbnail) {
+	width: 20px;
+	height: 20px;
+}
+
+treechildren::-moz-tree-row(hide) {
+	display: none;
+	width: 0px;
+	height: 0px;
+}
+
+treechildren::-moz-tree-column {
+	min-width: 0px;
+

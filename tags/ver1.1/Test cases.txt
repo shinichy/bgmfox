@@ -1,0 +1,49 @@
+-Play/Pause
+-Previous
+-Next
+-Mute on/off
+-Change volume
+-Seek
+-Repeat
+-Shuffle
+-Search
+--Check conditions
+-Login
+-Playlist
+--Create a playlist
+--Context menu
+---Delete a playlist
+---Rename a playlist
+-save previous state
+-import/export Library
+
+Check both list and grid view from here
+
+-Playlist
+--Update a playlist
+
+-Add a video (Check 2 patterns: to playlsit and to library )
+--from search result
+--from the main window
+
+-Drag and drop
+--check top and bottom bounds.
+--Check 3 patterns: playlist to playlist, video to video, video to playlist
+--drag multiple items
+
+-Video
+--context menu
+---Update a video information
+---Delete a video
+---Open the original site (Niconico and Youtube)
+----from playlist and search result
+--Tree
+---Thumnail tooltip
+---Sort
+
+-Keyboard shortcut
+--Play/Pause (Ctrl+P)
+--Load video (Enter)
+--Previous (Ctrl+Left)
+--Next (Ctrl+Right)
+--Create a playlist (Shift+Alt+N)

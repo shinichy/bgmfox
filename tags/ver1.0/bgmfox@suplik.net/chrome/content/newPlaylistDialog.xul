@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<dialog id="dlgNewPlaylist"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        buttons="accept,cancel"
+        ondialogaccept="return doOK();"
+        ondialogcancel="return doCancel();">
+
+<script>
+function doOK(){
+	window.arguments[0].out = {title:document.getElementById("txtPlaylistName").value};
+	return true;
+}
+
+function doCancel(){
+  return true;
+}
+</script>
+
+<description value="New playlist name"/>
+<textbox id="txtPlaylistName"/>
+
+</dialog>

@@ -1,0 +1,72 @@
+<!ENTITY bgmfox.title "BGM Fox">
+<!ENTITY openBGMFox.commandkey "E">
+<!ENTITY openBGMFox.modifierskey "shift accel">
+<!ENTITY newPlaylist.key "N">
+<!ENTITY playOrPause.key "P">
+<!ENTITY addVideoFromMainCmd.label "メインウィンドウから追加">
+<!ENTITY updatePlaylistCmd.label "更新">
+<!ENTITY renamePlaylistCmd.label "名前変更">
+<!ENTITY deletePlaylistCmd.label "削除">
+<!ENTITY updateVideoInfoCmd.label "更新">
+<!ENTITY deleteVideosCmd.label "削除">
+<!ENTITY openOriginalSiteCmd.label "元のサイトを開く">
+<!ENTITY newPlaylistCmd.label "新しいプレイリスト">
+<!ENTITY exportCmd.label "ライブラリをエクスポート">
+<!ENTITY importtCmd.label "ライブラリをインポート">
+<!ENTITY addToPlaylistMenu.label "プレイリストに追加">
+<!ENTITY previousImg.tooltiptext "前の動画 Ctrl+Left">
+<!ENTITY playImg.tooltiptext "再生 Ctrl+">
+<!ENTITY nextImg.tooltiptext "次の動画 Ctrl+Right">
+<!ENTITY currentTimeLbl.value "0:00">
+<!ENTITY totalTimeLbl.value "0:00">
+<!ENTITY remainingTimeLbl.value "-0:00">
+<!ENTITY searchTxtbx.emptytext "動画を検索">
+<!ENTITY searchTxtbx.label "動画を検索">
+<!ENTITY searchTxtbx.tooltiptext "動画を検索">
+<!ENTITY searchImg.tooltiptext "検索">
+<!ENTITY sortMnl.label "並び順">
+<!ENTITY sortMnl.tooltiptext "並び順を指定">
+<!ENTITY publishedMi.label "投稿日">
+<!ENTITY viewCountMi.label "再生数">
+<!ENTITY ratingMi.label "マイリスト数">
+<!ENTITY settingsImg.tooltiptext "設定">
+<!ENTITY muteImg.tooltiptext "ミュートオン">
+<!ENTITY unmuteImg.tooltiptext "ミュートオフ">
+<!ENTITY listViewImg.tooltiptext "リストビュー">
+<!ENTITY gridViewImg.tooltiptext "グリッドビュー">
+<!ENTITY playlistsTab.label "プレイリスト">
+<!ENTITY niconicoTab.label "ニコニコ動画">
+<!ENTITY youtubeTab.label "YouTube">
+<!ENTITY titleTrcl.label "タイトル">
+<!ENTITY thumbnailTrcl.label "サムネイル">
+<!ENTITY timeTrcl.label "時間">
+<!ENTITY addedTrcl.label "投稿日">
+<!ENTITY viewsTrcl.label "再生数">
+<!ENTITY mylistsTrcl.label "マイリスト">
+<!ENTITY prevSrchRltBtn.label "前">
+<!ENTITY nextSrchRltBtn.label "次">
+<!ENTITY prevSrchRltBtn.tooltiptext "前の検索結果">
+<!ENTITY nextSrchRltBtn.tooltiptext "次の検索結果">
+<!ENTITY newPlaylistImg.tooltiptext "新しいプレイリスト, インポート/エクスポート ライブラリ">
+<!ENTITY noRepeatImg.tooltiptext "リピートなし">
+<!ENTITY oneRepeatImg.tooltiptext "動画をリピート">
+<!ENTITY allRepeatImg.tooltiptext "プレイリストをリピート">
+<!ENTITY shuffleOffImg.tooltiptext "シャッフル オフ">
+<!ENTITY shuffleOnImg.tooltiptext "シャッフル オン">
+<!ENTITY library "ライブラリ">
+
+<!--confirmOverwiteLibraryDialog.xul-->
+<!ENTITY description1.value "既にライブラリが存在します．">
+<!ENTITY description2.value "既存のライブラリを削除して，上書きしますか？">
+
+<!--newPlaylistDialog.xul-->
+<!ENTITY description.value "新しいプレイリストの名前">
+
+<!--prefs.xul-->
+<!ENTITY caption.label "ニコニコ動画のログイン情報:">
+<!ENTITY mailLbl.value "メールアドレス:">
+<!ENTITY passwordLbl.value "パスワード:">
+
+<!--askRelogin.xul-->
+<!ENTITY askReloginDesc.value "ログインし直しますか？">
+

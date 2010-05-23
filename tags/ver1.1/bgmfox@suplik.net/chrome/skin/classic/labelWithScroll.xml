@@ -1,0 +1,419 @@
+<?xml version="1.0"?>
+
+<!--
+  Copyright © 2009 Yahoo! Inc. 
+  All Rights Reserved
+  -->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+	  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	  <binding id="labelWithScroll">
+		  <implementation>
+			  <constructor><![CDATA[
+				this.containerElem = document.getAnonymousNodes(this)[0];
+				this.labelElem = this.containerElem.firstChild;
+				//this.progressElem = this.containerElem.lastChild;
+				this.progressElem = this.labelElem.nextSibling;
+
+                this.showGotoPlanetIconTimer = null;
+				
+				var pad = this.getAttribute('paddingend');
+				if (pad != '') {
+					this.paddingend = pad;
+				}			  	
+				var scrollingAttr = this.getAttribute('scrolling');
+				if (scrollingAttr != '') {
+					this.scrolling = (scrollingAttr == 'true');
+				}
+			
+				// try to get some overrides from the preferences	
+				try {
+					this.scrollSleep = gFoxyTunesPref.getIntPref("title_scroll_sleep");
+				} catch (e) {}
+				try {
+					this.switchDirectionSleep = gFoxyTunesPref.getIntPref("title_switch_dir_sleep");
+				} catch (e) {}
+			  ]]></constructor>
+
+			  <!-- will start/stop scrolling if needed -->
+			  <method name="refreshScroll">
+				  <body><![CDATA[
+					  return this.startScroll();
+				  ]]></body>
+			  </method>
+					  
+			  <!-- will stop scrolling and the start it if needed -->
+			  <method name="startScroll">
+				  <body><![CDATA[
+					  this.stopScroll();
+
+					  if (! this.scrolling) {
+					  	return; 
+					  }
+
+					  if ((this.labelElem.boxObject.width + this.paddingend) > 
+					  			this.containerElem.boxObject.width) {
+						// the label is wider than the containter, start scrolling
+					  	this.scrollLabel(this); 
+					  } 
+				  ]]></body>
+			  </method>
+
+			  <method name="stopScroll">
+				  <body><![CDATA[
+					  if (this.timerID != 0) {
+						clearTimeout(this.timerID);
+						this.timerID = 0;
+					  }
+				  ]]></body>
+			  </method>
+
+			  <method name="scrollLabel">
+				  <parameter name="me"/>
+				  <body><![CDATA[
+					//dump(me.labelElem.left + "\n");
+					me.labelElem.left = me.labelElem.left*1 + me.increment;
+					var textEndsAt = me.labelElem.boxObject.width*1 + me.labelElem.left*1;
+					me.stopScroll();
+					if (
+						((me.increment < 0) && (textEndsAt + me.paddingend <= me.containerElem.boxObject.width)) ||
+						((me.increment > 0) && (me.labelElem.left >= 0))
+					) {
+						me.increment = -me.increment;
+						me.timerID = setTimeout(me.scrollLabel, me.switchDirectionSleep, me);
+				  	} else {
+						me.timerID = setTimeout(me.scrollLabel, me.scrollSleep, me);
+					}
+				  ]]></body>
+		  	  </method>
+
+			  <method name="togglePauseScroll">
+				  <body><![CDATA[
+					if (this.getAttribute('scrolling') != 'true') {
+						// if not scrolling, cannot resume/pause
+						return;
+					}
+					this.scrolling = !this.scrolling; 
+					this.refreshScroll()
+				  ]]></body>
+		  	  </method>
+			
+			  <method name="resetPosition">
+				  <body><![CDATA[
+					  this.increment = 1;
+					  this.labelElem.left = 0;
+					  this.refreshScroll();
+					  this.alignLabel();
+				  ]]></body>
+		  	  </method>
+
+			 <method name="trackProgressMouseOver">
+				  <parameter name="event"/>
+				  <body><![CDATA[
+					var me = event.target.parentNode.parentNode;
+					// save current track length for display while hovering
+					// assume length != null, because we are over the seek thumb
+					me.currentTrackLength = foxytunesGetCurrentTrackItem('Length');	
+					// save current track label for restoring after hovering
+					me.currentTrackLabel = me.getAttribute('label');
+					me.setAttribute('tooltiptext', me.getSeekingLabel());
+				  ]]></body>
+		  	  </method>
+
+			 <method name="trackProgressMouseOut">
+				  <parameter name="event"/>
+				  <body><![CDATA[
+					var me = event.target.parentNode.parentNode;
+					me.setAttribute('tooltiptext', me.currentTrackLabel);
+				  ]]></body>
+		  	  </method>
+
+              <method name="planetButtonMouseOver">
+                  <parameter name="event"/>
+                  <body><![CDATA[
+                	var me = event.target.parentNode;
+					me.currentTrackLabel = me.getAttribute('label');
+					me.setAttribute('tooltiptext', foxytunesGetLocaleString('trackOnThePlanet', ['"' + me.currentTrackLabel + '"']));
+                  ]]></body>
+              </method>
+
+              <method name="planetButtonMouseOut">
+                  <parameter name="event"/>
+                  <body><![CDATA[
+                    var me = event.target.parentNode;
+					me.setAttribute('tooltiptext', me.currentTrackLabel);
+                  ]]></body>
+              </method>
+
+			  <method name="trackProgressMouseDown">
+				  <parameter name="event"/>
+				  <body><![CDATA[
+					if (event.button != 0) {
+						return;
+					}
+					var me = event.target.parentNode.parentNode;
+					gFoxyTunesTrackTitleThis = me;
+					if (me.bSeeking) {
+						// already seeking	
+						return;
+					}
+
+					me.bSeeking = true;
+
+					// save current track length for display while seeking
+					me.currentTrackLength = foxytunesGetCurrentTrackItem('Length');	
+					// save current track label for restoring after seeking
+					me.currentTrackLabel = me.getAttribute('label');
+					me.setSeekingLabel();
+					me.progressElem.setAttribute('seeking', 'true');
+
+					event.preventDefault();
+					event.stopPropagation();
+					me.seekStartX = event.screenX;
+					addEventListener("mouseup", me.trackProgressMouseUp, false);
+					addEventListener("mousemove", me.trackProgressMouseMove, false);
+					//dump('mouse down\n');
+				  ]]></body>
+		  	  </method>
+
+			  <method name="trackProgressMouseUp">
+				  <parameter name="event"/>
+				  <body><![CDATA[
+					var me = gFoxyTunesTrackTitleThis;
+					if (me.bSeeking) {
+						//dump('mouse up\n');
+						me.bSeeking = false;
+						me.progressElem.removeAttribute('seeking');
+						removeEventListener("mouseup", me.trackProgressMouseUp, false);
+						removeEventListener("mousemove", me.trackProgressMouseMove, false);
+						var progress = (me.progressElem.left*1 / me.getTotalSeekWidth());
+						me.progress = progress;
+				
+						var len = foxytunesGetCurrentTrackItem('Length');	
+						if (len != null) {
+							var newPos = Math.round(len*progress);
+							foxytunesSetCurrentTrackPosition(newPos);
+							// TBD: alert the user if no seeking supported
+						}
+
+						// restore the original song name
+						me.label = me.currentTrackLabel;
+					}
+				  ]]></body>
+		  	  </method>
+
+			  <method name="trackProgressMouseMove">
+				  <parameter name="event"/>
+				  <body><![CDATA[
+					var me = gFoxyTunesTrackTitleThis;
+					if (me.bSeeking) {
+						var currentX = event.screenX;
+						var delta = currentX - me.seekStartX;
+						var newLeft = me.progressElem.left*1 + delta;
+						if ((newLeft >= 0) && (newLeft <= me.getTotalSeekWidth())) {
+							me.progressElem.left = newLeft;
+							me.seekStartX = currentX;
+						}
+
+						// display song position info
+						me.setSeekingLabel();
+						//dump('mouse move\n');
+					}
+				  ]]></body>
+		  	  </method>
+
+			  <method name="getSeekingLabel">
+				  <body><![CDATA[
+					var progress = (this.progressElem.left*1 / this.getTotalSeekWidth());
+					var pos = Math.round(this.currentTrackLength*progress);
+					var persentage =  Math.round(progress * 100);
+ 					return   	foxytunesSeconds2TimeStr(pos) +
+ 							' / ' + 
+							foxytunesSeconds2TimeStr(this.currentTrackLength) + 
+							' - ' + persentage + '%';
+				  ]]></body>
+		  	  </method>
+
+			  <method name="setSeekingLabel">
+				  <body><![CDATA[
+ 					this.label = this.getSeekingLabel();
+				  ]]></body>
+		  	  </method>
+
+
+			  <method name="getTotalSeekWidth">
+				  <body><![CDATA[
+                    // if the goto planet icon is showing, the actual width is bigger than the calculated one
+					return this.containerElem.boxObject.width - this.progressElem.boxObject.width;
+				  ]]></body>
+		  	  </method>
+
+			  <method name="alignLabel">
+				  <body><![CDATA[
+					  if (this.getAttribute('ftalign') != 'right') {
+						// default alignment, nothing to do
+						return;
+					  }
+
+					  if ((this.labelElem.boxObject.width + this.paddingend) > 
+					  			this.containerElem.boxObject.width) {
+						// the label is larger than the container, nothing to do
+						return;
+					  }
+
+   					  // the label is narrow enogh, align to right:
+ 					  this.labelElem.left = this.containerElem.boxObject.width - 
+									this.labelElem.boxObject.width;
+				  ]]></body>
+		  	  </method>
+
+			  <method name="onMouseOver">
+                  <parameter name="event"/>
+				  <body><![CDATA[
+                        if (this.isHovering) return;
+                        this.isHovering = true;
+                        this.stopScroll();
+				  ]]></body>
+			  </method>
+
+			  <method name="onMouseOut">
+                  <parameter name="event"/>  
+				  <body><![CDATA[
+                        if (!this.isHovering) return;
+                        var elementEntered = event.relatedTarget;
+                        // we are moving between internal elements
+                        if ((elementEntered == this.containerElem) || 
+                            (elementEntered && (elementEntered.parentNode == this.containerElem))) return;
+
+                        this.isHovering = false;
+                        this.startScroll();
+				  ]]></body>
+			  </method>
+
+              <method name="hasTrack">
+                  <body><![CDATA[
+                      var hasTrack = this.getAttribute('ft-has-track');
+                      return (hasTrack == 'true');
+                  ]]></body>
+              </method>
+
+              <method name="hideGotoPlanet">
+                  <body><![CDATA[
+                      var hideGotoPlanet = this.getAttribute('hide-goto-planet');
+                      return (hideGotoPlanet == 'true');
+                  ]]></body>
+              </method>
+
+              <method name="onClick">
+                    <parameter name="event"/>
+                    <body><![CDATA[
+                        var target = event.originalTarget;
+                        var targetClass = target.getAttribute('class');
+                        var sID = null;
+                        switch (targetClass) {
+                            case "foxy-scrolling-label": sID = 5;
+                                                         break;
+                            case "foxytunes-statusbar-button": sID = 11;
+                                                         break;
+                            default: return;
+                        }                            
+
+                        if (!this.hasTrack()) return;
+                        foxytunesGotoPlanet('track', sID);
+                    ]]></body>
+              </method>
+
+
+			  <property name="label">
+				  <getter><![CDATA[
+					  this.getAttribute('label');
+				  ]]></getter>
+				  <setter><![CDATA[
+					  var currentLabel = this.getAttribute('label');
+					  if (currentLabel == val) {
+						return;
+					  }
+					  this.stopScroll();
+					  this.increment = 1;
+					  this.labelElem.left = 0;
+					  this.setAttribute('label', val);
+					  this.setAttribute('tooltiptext', val);
+					  if (this.scrolling) {
+					  	this.startScroll();
+					  }
+					  
+					  this.alignLabel();
+
+                      if (foxytunesIsInMinimode()) {
+                            // fixes a bug in minimode in which the title panel isn't repainted 
+                            if (window.windowState != window.STATE_MINIMIZED && 
+                                !window.gFoxyTunesMiniMode.isMinimizedToTray()) {
+                                resizeBy(0, 0);
+                            }
+                      }
+				  ]]></setter>
+   		  	  </property>
+
+			  <property name="progress">
+				  <getter><![CDATA[
+					  this.getAttribute('progress');
+				  ]]></getter>
+				  <setter><![CDATA[
+					  this.setAttribute('progress', val);
+
+					  if (this.bSeeking) {
+						// do not update ui while seeking
+						return;
+					  }
+							
+					  if (val >= 0) {
+					  	var totalWidth = this.getTotalSeekWidth();
+   					  	var newLeft = Math.round(totalWidth * val);
+					  	this.progressElem.left = newLeft;
+					  	//this.progressElem.style.width = newLeft + 'px';
+					  } else {
+						this.progressElem.left = -200;
+					  }
+
+					  // position in the middle vertically:
+   					  var newTop = (this.containerElem.boxObject.height - 
+								this.progressElem.boxObject.height) / 2;
+					  this.progressElem.top = newTop;
+				  ]]></setter>
+			  </property>
+
+			 <field name="containerElem"/>
+			 <field name="labelElem"/>
+			 <field name="progressElem"/>
+			 <field name="increment">1</field>
+			 <field name="timerID">0</field>
+			 <field name="scrolling">false</field>
+			 <field name="paddingend">6</field>
+			 <field name="scrollSleep">80</field>
+			 <field name="switchDirectionSleep">3000</field>
+			 <field name="bSeeking">false</field>
+		 </implementation>
+
+		 <handlers>
+			 <handler event="mouseover" action="this.onMouseOver(event)"/> 
+			 <handler event="mouseout" action="this.onMouseOut(event)"/> 
+			 <handler event="click" button="0" action="this.onClick(event);"/> 
+		 </handlers>
+
+		 <content>
+			 <xul:stack class="foxy-scrolling-stack" xbl:inherits="width" style="overflow: hidden;">
+				 <xul:label class="foxy-scrolling-label" xbl:inherits="value=label" left="0"/>
+				 <xul:box class="foxy-track-progress" 
+						left="-100" 
+						onclick="event.stopPropagation();event.preventDefault();"
+						onmousedown="trackProgressMouseDown(event);"
+						onmouseover="trackProgressMouseOver(event);"
+						onmouseout="trackProgressMouseOut(event);"/>
+			  </xul:stack>
+
+			  <children/>
+		  </content>
+	  </binding>
+</bindings>
