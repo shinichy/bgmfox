@@ -120,32 +120,48 @@ function setToken() {
 }
 
 function onLoad() {
-    playlistsManager = createPlaylistsManager();
-    rdfManager = createRdfManager();
-    document.getElementById("rlbPlaylists").builder.addListener(rdfManager.get_playlistListener());
-    document.getElementById("trPlaylistContents").builder.addListener(rdfManager.get_playlistContentListener());
-    var embeddedDocument = document.getElementById("nicoBrowser").contentDocument;
-    var youtube = new Youtube(embeddedDocument);
-    var niconico = new Niconico(embeddedDocument);
-    videoManager = new VideoManager({ youtube: youtube, niconico: niconico });
-    videoManager.init();
-    mylistManager.init();
-    embeddedDocument.getElementById("btnOnPlayerStateChange").addEventListener("click", onPlayerStateChange, false);
-    embeddedDocument.getElementById("btnUpdateProgress").addEventListener("click", onUpdateProgress, false);
-    rdfManager.loadDataSource(playlistsManager.loadedFunc);
-    ContextPlaylist.init();
-    scrollingVideoTitle = newScrollingVideoTitle();
+    try {
+	var embeddedDocument = document.getElementById("nicoBrowser").contentDocument;
+	log("onLoad: " + embeddedDocument.location.href);
+	log(document.getElementById("nicoBrowser").webProgress.isLoadingDocument);
+	if (embeddedDocument.body === null) {
+	    document.getElementById("nicoBrowser").reload();
+	    setTimeout(onLoad, 3000);
+	    return;
+	}
+	
+	playlistsManager = createPlaylistsManager();
+	rdfManager = createRdfManager();
+	document.getElementById("rlbPlaylists").builder.addListener(rdfManager.get_playlistListener());
+	document.getElementById("trPlaylistContents").builder.addListener(rdfManager.get_playlistContentListener());
+	var youtube = new Youtube(embeddedDocument);
+	var niconico = new Niconico(embeddedDocument);
+	videoManager = new VideoManager({ youtube: youtube, niconico: niconico });
+	videoManager.init();
+	mylistManager.init();
+	embeddedDocument.getElementById("btnOnPlayerStateChange").addEventListener("click", onPlayerStateChange, false);
+	embeddedDocument.getElementById("btnUpdateProgress").addEventListener("click", onUpdateProgress, false);
+	rdfManager.loadDataSource(playlistsManager.loadedFunc);
+	ContextPlaylist.init();
+	scrollingVideoTitle = newScrollingVideoTitle();
 
-    var selectedIndex = document.getElementById("tbplsMainList").selectedIndex;
-    if (selectedIndex == enumTabValues.mylist) {
-	gridView = mylistManager.gridView;
-	currentPlaylistManager = mylistManager;
-	mylistManager.loadMylists();
-    } else {
-	gridView = playlistsManager.gridView;
-	currentPlaylistManager = playlistsManager;
-    }
+	var selectedIndex = document.getElementById("tbplsMainList").selectedIndex;
+	if (selectedIndex == enumTabValues.mylist) {
+	    gridView = mylistManager.gridView;
+	    currentPlaylistManager = mylistManager;
+	    mylistManager.loadMylists();
+	} else {
+	    gridView = playlistsManager.gridView;
+	    currentPlaylistManager = playlistsManager;
+	}
+	log("onLoad succeeded");
+
+    } catch (x) {
+	log(x);
+	setTimeout(onLoad, 3000);
+    }    
 }
+
 
 function isNicoVideoId(videoId) {
     return videoId.match(regExprNicoVideoId);
@@ -1107,6 +1123,7 @@ YoutubeProto.prototype = new VideoSite();
 Youtube.prototype = new YoutubeProto();
 
 function Niconico(htmlDocument) {
+    log("Niconico: " + htmlDocument.location.href);
     this.initialize.apply(this, arguments);
 }
 
@@ -1398,21 +1415,25 @@ function createPlaylistsManager() {
     };
 
     var _getSelectedVideoIds = function () {
-	var videoIds = new Array();
-	let start = new Object();
-	let end = new Object();
-	let numRanges = trPlContents.view.selection.getRangeCount();
-	if (numRanges > 0) {
-	    for (var t = 0; t < numRanges; t++) {
-		trPlContents.view.selection.getRangeAt(t, start, end);
-		for (var v = start.value; v <= end.value; v++) {
-		    let videoId = trPlContents.view.getItemAtIndex(v).getAttribute("value");
-		    videoIds.push(videoId);
+	if (that.isListView && trPlContents.view ) {
+	    var videoIds = new Array();
+	    let start = new Object();
+	    let end = new Object();
+	    let numRanges = trPlContents.view.selection.getRangeCount();
+	    if (numRanges > 0) {
+		for (var t = 0; t < numRanges; t++) {
+		    trPlContents.view.selection.getRangeAt(t, start, end);
+		    for (var v = start.value; v <= end.value; v++) {
+			let videoId = trPlContents.view.getItemAtIndex(v).getAttribute("value");
+			videoIds.push(videoId);
+		    }
 		}
 	    }
-	}
 
-	return videoIds;
+	    return videoIds;    
+	} else {
+	    return that.gridView.get_selectedVideoId();
+	}
     };
 
     that.loadedFunc = function() {
@@ -1898,7 +1919,7 @@ function createPlaylistsManager() {
 	    }
 	} else if (mainDocument.URL.indexOf("youtube.com") !== -1) {
 	    title = mainDocument.title;
-	    let regExpr = /watch\?v=(\w+)/;
+	    let regExpr = /watch\?v=(.{11})/;
 	    rObj = new RegExp(regExpr);
 	    if (mainDocument.URL.match(rObj)) {
 		videoId = RegExp.$1;
