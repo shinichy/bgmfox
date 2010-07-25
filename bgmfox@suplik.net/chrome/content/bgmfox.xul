@@ -270,8 +270,7 @@
 		</hbox>
 
 		<!--Browser-->
-		<browser id="nicoBrowser" height="100" type="content" src="http://suplik.net/bgmfox/player/bgmfox-player-dev.html" persist="width height" />
-		<!-- <browser id="nicoBrowser" height="100" type="content" src="http://suplik.net/bgmfox/nicoTest.html" persist="width height" /> -->
+		<browser id="nicoBrowser" height="100" type="content" src="http://suplik-net.appspot.com/bgmfox/player/bgmfox-player-dev.html" persist="width height" />
 		<browser id="nicoBrowser2" type="content" />
 
 		<splitter collapse="before">

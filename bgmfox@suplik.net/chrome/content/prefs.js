@@ -3,7 +3,7 @@ var loginManager = Components.classes["@mozilla.org/login-manager;1"].getService
 var prefSvc = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 var prefBranch = prefSvc.getBranch("extensions.bgmfox.");
 var oldMail;
-//var nsLoginInfo = new Components.Constructor("@mozilla.org/login-manager/loginInfo;1", Components.interfaces.nsILoginInfo, "init");
+var nsLoginInfo = new Components.Constructor("@mozilla.org/login-manager/loginInfo;1", Components.interfaces.nsILoginInfo, "init");
 
 function onPaneload() {
 	oldMail = prefBranch.getCharPref("niconicoLoginMail");
@@ -52,7 +52,7 @@ function onAccept() {
 		let newLogin = new nsLoginInfo(loginHostName, loginHostName, null, newMail, password, 'newMail', 'password');
 		let oldLogin = exists(newMail);
 		if (oldLogin) {
-			loginManager.modifyLogin(oldLogin, newLogin)
+			loginManager.modifyLogin(oldLogin, newLogin);
 		} else {
 			loginManager.addLogin(newLogin);
 			window.arguments[0].out = {mail: newMail, password: password};			

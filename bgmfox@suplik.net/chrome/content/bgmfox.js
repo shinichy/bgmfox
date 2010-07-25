@@ -520,19 +520,20 @@ function VideoManager(videoSites) {
     };
 
     this.changeVolume = function(event) {
-	if (this.playingVideoSite === null) {
-	    return;
-	}
-
-	this.playingVideoSite.changeVolume(event.target.value);
+	    if (this.playingVideoSite === null) {
+	        return;
+	    }
+        
+        var volume = event.target.max - event.target.value;
+	    this.playingVideoSite.changeVolume(volume);
     };
 
     this.seekTo = function(event) {
-	if (this.playingVideoSite === null) {
-	    return;
-	} else if (this.noSeek) {
-	    this.noSeek = false;
-	    return;
+	    if (this.playingVideoSite === null) {
+	        return;
+	    } else if (this.noSeek) {
+	        this.noSeek = false;
+	        return;
 	}
 
 	this.seekingCount++;
@@ -730,7 +731,8 @@ function VideoManager(videoSites) {
 	    document.getElementById("imgPlay").style.display = "none";
 	    document.getElementById("imgPause").style.display = "block";
 	    document.getElementById("imgBuffering").style.visibility = "hidden";
-	    this.playingVideoSite.changeVolume(document.getElementById("sclVolume").value);
+        var volume =  document.getElementById("sclVolume").max - document.getElementById("sclVolume").value;
+	    this.playingVideoSite.changeVolume(volume);
 	    this.forceLogin = false;
 	    document.getElementById("nicoBrowser").contentDocument.getElementById("btnScrollToBottom").click();
 	    videoManager.isStopped = false;
@@ -1330,31 +1332,25 @@ NiconicoProto.searchNicoVideo = function(niconicoProto, query, page) {
     }
 
     if (videoManager.videoSites.niconico.page * videoManager.searchResultsPerPage > searchTotal) {
-	document.getElementById("btnNxtNicoSrchRlt").disabled = true;
+	    document.getElementById("btnNxtNicoSrchRlt").disabled = true;
     } else {
-	document.getElementById("btnNxtNicoSrchRlt").disabled = false;
+	    document.getElementById("btnNxtNicoSrchRlt").disabled = false;
     }
-
-
-    for (let i = 1; i < videoManager.searchResultsPerPage + 1; i++) {
-	var divItem = domDoc.getElementById("item" + i);
-	if (divItem === null) {
-	    break;
-	}
-
-	var paragraphs = divItem.getElementsByTagName("p");
+    
+	var paragraphs = domDoc.getElementsByTagName("p");
 	for (var j = 0; j < paragraphs.length; j++) {
-	    if (paragraphs[j].getAttribute("class") == "font12") {
-		var child = paragraphs[j].firstChild;
-		var rObj = new RegExp("\/([^\/]*)$");
-		child.getAttribute("href").match(rObj);
-		var videoId = RegExp.$1;
-		var title = child.firstChild.textContent;
-		rlbNiconicoSearchResult.appendItem(title, videoId);
-		break;
+	    if (paragraphs[j].getAttribute("class") == "font14") {
+		    var child = paragraphs[j].getElementsByTagName("a")[0];
+		    var rObj = new RegExp("\/([^\/]*)$");
+		    child.getAttribute("href").match(rObj);
+		    var videoId = RegExp.$1;
+		    var title = child.firstChild.textContent;
+		    rlbNiconicoSearchResult.appendItem(title, videoId);
+            if (rlbNiconicoSearchResult.itemCount == videoManager.searchResultsPerPage + 2) {
+                break;
+            }
 	    }
 	}
-    }
 
     browser.removeEventListener("load", NiconicoProto.searchNicoVideo, true);
     videoManager.markPlayingVideo();
