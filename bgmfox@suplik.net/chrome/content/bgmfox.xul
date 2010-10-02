@@ -3,42 +3,42 @@
 <!--<?xml-stylesheet href="chrome://browser/skin/browser.css" type="text/css" ?>-->
 <!DOCTYPE page SYSTEM "chrome://bgmfox/locale/bgmfox.dtd">
 
-<window id="wndwBGMFox" title="&bgmfox.title;"
+<page id="wndwBGMFox" title="&bgmfox.title;"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-        onload="onLoad()" persist="width">
+        onload="bgmfoxGlobal.onLoad()" persist="width">
 	<script type="text/javascript" src="chrome://bgmfox/content/bgmfox.js" />
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js" />
 
 	<commandset>
 		<!--Control-->
-		<command id="cmd_playOrPause" oncommand="playOrPause()" />
-		<command id="cmd_playNext" oncommand="videoManager.nextVideo()" />
-		<command id="cmd_playPrevious" oncommand="videoManager.previousVideo()" />
+		<command id="cmd_playOrPause" oncommand="bgmfoxGlobal.playOrPause()" />
+		<command id="cmd_playNext" oncommand="bgmfoxGlobal.videoManager.nextVideo()" />
+		<command id="cmd_playPrevious" oncommand="bgmfoxGlobal.videoManager.previousVideo()" />
 		<!--playlist context-->
-		<command id="cmd_addVideoFromMain" oncommand="playlistsManager.addVideoWithinBrowser()" />
-		<command id="cmd_updatePlaylist" oncommand="playlistsManager.updatePlaylistInfo()" />
-		<command id="cmd_renamePlaylist" oncommand="playlistsManager.renamePlaylist()" />
-		<command id="cmd_deletePlaylist" oncommand="playlistsManager.deletePlaylist()" />
-		<command id="cmd_copyPlaylistToNiconico" oncommand="playlistsManager.copyToNiconico()" />
+		<command id="cmd_addVideoFromMain" oncommand="bgmfoxGlobal.playlistsManager.addVideoWithinBrowser()" />
+		<command id="cmd_updatePlaylist" oncommand="bgmfoxGlobal.playlistsManager.updatePlaylistInfo()" />
+		<command id="cmd_renamePlaylist" oncommand="bgmfoxGlobal.playlistsManager.renamePlaylist()" />
+		<command id="cmd_deletePlaylist" oncommand="bgmfoxGlobal.playlistsManager.deletePlaylist()" />
+		<command id="cmd_copyPlaylistToNiconico" oncommand="bgmfoxGlobal.playlistsManager.copyToNiconico()" />
 		<!--my list context-->
-		<command id="cmd_deleteMylist" oncommand="mylistManager.deleteMylist()" />
-		<command id="cmd_renameMylist" oncommand="mylistManager.renameMylist()" />
-		<command id="cmd_openOriginalMylist" oncommand="mylistManager.openOriginalMylist()" />
-		<command id="cmd_copyMylistToBgmfox" oncommand="mylistManager.copyToBgmfox()" />
+		<command id="cmd_deleteMylist" oncommand="bgmfoxGlobal.mylistManager.deleteMylist()" />
+		<command id="cmd_renameMylist" oncommand="bgmfoxGlobal.mylistManager.renameMylist()" />
+		<command id="cmd_openOriginalMylist" oncommand="bgmfoxGlobal.mylistManager.openOriginalMylist()" />
+		<command id="cmd_copyMylistToBgmfox" oncommand="bgmfoxGlobal.mylistManager.copyToBgmfox()" />
 		<!--Video context-->
-		<command id="cmd_updateVideoInfo" oncommand="playlistsManager.onUpdateVideoInfo()" />
-		<command id="cmd_deleteVideos" oncommand="playlistsManager.deleteVideos()" />
-		<command id="cmd_openOriginalSite" oncommand="openOriginalSite()" />
+		<command id="cmd_updateVideoInfo" oncommand="bgmfoxGlobal.playlistsManager.onUpdateVideoInfo()" />
+		<command id="cmd_deleteVideos" oncommand="bgmfoxGlobal.playlistsManager.deleteVideos()" />
+		<command id="cmd_openOriginalSite" oncommand="bgmfoxGlobal.openOriginalSite()" />
 		<!--my list item context-->
-		<command id="cmd_deleteMylistVideos" oncommand="mylistManager.deleteVideos()" />
+		<command id="cmd_deleteMylistVideos" oncommand="bgmfoxGlobal.mylistManager.deleteVideos()" />
 		<!--at blank playlist-->
-		<command id="cmd_newPlaylist" oncommand="playlistsManager.createPlaylist()" />
-		<command id="cmd_export" oncommand="exportLibrary()" />
-		<command id="cmd_import" oncommand="rdfManager.importLibrary()" />
+		<command id="cmd_newPlaylist" oncommand="bgmfoxGlobal.playlistsManager.createPlaylist()" />
+		<command id="cmd_export" oncommand="bgmfoxGlobal.exportLibrary()" />
+		<command id="cmd_import" oncommand="bgmfoxGlobal.rdfManager.importLibrary()" />
 		<!--at blank my list-->
-		<command id="cmd_newMylist" oncommand="mylistManager.createMylist()" />
+		<command id="cmd_newMylist" oncommand="bgmfoxGlobal.mylistManager.createMylist()" />
 
 	</commandset>
 
@@ -73,8 +73,8 @@
 			<menuitem label="&deleteVideosCmd.label;" command="cmd_deleteVideos" />
 			<menuitem label="&openOriginalSiteCmd.label;" command="cmd_openOriginalSite" />
 			<menu id="copyToMylist-context" label="&copyToMylistCmd.label;">
-				<menupopup id="mpopupAddToMylist" oncommand="playlistsManager.copyToMylist(event)"
-				           onpopupshowing="mylistManager.fillMylistsMenuItem('copyToMylist-context')">
+				<menupopup id="mpopupAddToMylist" oncommand="bgmfoxGlobal.playlistsManager.copyToMylist(event)"
+				           onpopupshowing="bgmfoxGlobal.mylistManager.fillMylistsMenuItem('copyToMylist-context')">
 ">
 				</menupopup>
 			</menu>
@@ -84,7 +84,7 @@
 		<menupopup id="mylistVideo-context">
 			<menu id="copyToPlaylist-context" label="&copyToPlaylistCmd.label;" datasources="rdf:null"
 			      ref="http://suplik.net/bgmfox/playlists">
-				<menupopup oncommand="mylistManager.copyToPlaylist(event)">
+				<menupopup oncommand="bgmfoxGlobal.mylistManager.copyToPlaylist(event)">
 					<menuitem label="&library;" value="all" />
 				</menupopup>
 				<template>
@@ -115,8 +115,8 @@
 				</template>
 			</menu>
 			<menu id="addToMylist-context" label="&mylist;">
-				<menupopup id="mpopupAddToMylist" oncommand="ContextPlaylist.addToMylist(event)"
-				           onpopupshowing="mylistManager.fillMylistsMenuItem('addToMylist-context')">
+				<menupopup id="mpopupAddToMylist" oncommand="bgmfoxGlobal.ContextPlaylist.addToMylist(event)"
+				           onpopupshowing="bgmfoxGlobal.mylistManager.fillMylistsMenuItem('addToMylist-context')">
 ">
 				</menupopup>
 			</menu>
@@ -125,13 +125,13 @@
 
 		<!--my list item drag popup-->
 		<menupopup id="popupMylistItem">
-			<menuitem label="Move" oncommand="mylistManager.moveMylistItem()" />
-			<menuitem label="Copy" oncommand="mylistManager.copyMylistItem()"/>
+			<menuitem label="Move" oncommand="bgmfoxGlobal.mylistManager.moveMylistItem()" />
+			<menuitem label="Copy" oncommand="bgmfoxGlobal.mylistManager.copyMylistItem()"/>
 		</menupopup>
 
 		<!--Volume popup-->
-		<menupopup id="popupVolume" onmouseout="onPopupVolumeMouseOut(event)">
-			<scale id="sclVolume" orient="vertical" value="50" onchange="videoManager.changeVolume(event)"
+		<menupopup id="popupVolume" onmouseout="bgmfoxGlobal.onPopupVolumeMouseOut(event)">
+			<scale id="sclVolume" orient="vertical" value="50" onchange="bgmfoxGlobal.videoManager.changeVolume(event)"
 			       persist="value" movetoclick="true" />
 		</menupopup>
 
@@ -185,14 +185,14 @@
 
 		<!--Control area-->
 		<hbox id="hbxToolbar1" align="center">
-			<image id="imgPrevious" class="previous-next-button control" onclick="videoManager.previousVideo()"
+			<image id="imgPrevious" class="previous-next-button control" onclick="bgmfoxGlobal.videoManager.previousVideo()"
 			       tooltiptext="&previousImg.tooltiptext;" />
 			<image id="imgPrevious_disabled" class="previous-next-button control" />
-			<image id="imgPlay" class="control" onclick="videoManager.playVideo()"
+			<image id="imgPlay" class="control" onclick="bgmfoxGlobal.videoManager.playVideo()"
 			       tooltiptext="&playImg.tooltiptext;" />
-			<image id="imgPause" class="control" onclick="videoManager.pauseVideo()"
+			<image id="imgPause" class="control" onclick="bgmfoxGlobal.videoManager.pauseVideo()"
 			       tooltiptext="&playImg.tooltiptext;" />
-			<image id="imgNext" class="previous-next-button control" onclick="videoManager.nextVideo()"
+			<image id="imgNext" class="previous-next-button control" onclick="bgmfoxGlobal.videoManager.nextVideo()"
 			       tooltiptext="&nextImg.tooltiptext;" />
 			<image id="imgNext_disabled" class="previous-next-button control" />
 			<stack flex="1">
@@ -219,13 +219,13 @@
 									<image id="imgProgress" top="4" />
 									<box id="bxProgress">
 										<scale id="sclProgress" orient="horizontal" value="0"
-										       onchange="videoManager.seekTo(event)" movetoclick="true" />
+										       onchange="bgmfoxGlobal.videoManager.seekTo(event)" movetoclick="true" />
 									</box>
 								</stack>
 								<label id="lblTotalTime" class="time title-zone" value="&totalTimeLbl.value;"
-								       onclick="onLblTimeClick(event)" persist="style" />
+								       onclick="bgmfoxGlobal.onLblTimeClick(event)" persist="style" />
 								<label id="lblRemainingTime" class="time title-zone" value="&remainingTimeLbl.value;"
-								       onclick="onLblTimeClick(event)" persist="style" />
+								       onclick="bgmfoxGlobal.onLblTimeClick(event)" persist="style" />
 							</hbox>
 							<spacer flex="1" />
 						</row>
@@ -241,9 +241,9 @@
 			         maxrows="10" completeselectedindex="true" showcommentcolumn="true" tabscrolling="true"
 			         sizetopopup="pref" src="" emptytext="&searchTxtbx.emptytext;" empty="true"
 			         label="&searchTxtbx.label;" tooltiptext="&searchTxtbx.tooltiptext;" clickSelectsAll="true"
-				 onkeyup="onKeyup(event)">
+				 onkeyup="bgmfoxGlobal.onKeyup(event)">
 				<hbox>
-					<image id="imgSearch" tooltiptext="&searchImg.tooltiptext;" onclick="videoManager.searchVideo()" />
+					<image id="imgSearch" tooltiptext="&searchImg.tooltiptext;" onclick="bgmfoxGlobal.videoManager.searchVideo()" />
 				</hbox>
 			</textbox>
 			<menulist id="mnlSort" label="&sortMnl.label;" persist="selectedIndex" tooltiptext="&sortMnl.tooltiptext;">
@@ -259,19 +259,19 @@
 			<spacer flex="1" />
 
 			<image id="imgBuffering" />
-			<image id="settings" class="control" onclick="onSettingsPressed()"
+			<image id="settings" class="control" onclick="bgmfoxGlobal.onSettingsPressed()"
 			       tooltiptext="&settingsImg.tooltiptext;" />
-			<image id="imgMute" class="control mute-unmute" onclick="videoManager.mute()"
-			       tooltiptext="&muteImg.tooltiptext;" onmouseover="onMuteMouseOver(event)"
-			       onmouseout="onImgMuteMouseOut(event)" />
-			<image id="imgUnmute" class="control mute-unmute" onclick="videoManager.unmute()"
-			       tooltiptext="&unmuteImg.tooltiptext;" onmouseover="onMuteMouseOver(event)"
-			       onmouseout="onImgMuteMouseOut(event)" />
+			<image id="imgMute" class="control mute-unmute" onclick="bgmfoxGlobal.videoManager.mute()"
+			       tooltiptext="&muteImg.tooltiptext;" onmouseover="bgmfoxGlobal.onMuteMouseOver(event)"
+			       onmouseout="bgmfoxGlobal.onImgMuteMouseOut(event)" />
+			<image id="imgUnmute" class="control mute-unmute" onclick="bgmfoxGlobal.videoManager.unmute()"
+			       tooltiptext="&unmuteImg.tooltiptext;" onmouseover="bgmfoxGlobal.onMuteMouseOver(event)"
+			       onmouseout="bgmfoxGlobal.onImgMuteMouseOut(event)" />
 		</hbox>
 
 		<!--Browser-->
-		<browser id="nicoBrowser" height="100" type="content" src="http://suplik-net.appspot.com/bgmfox/player/bgmfox-player-dev.html" persist="width height" />
-		<browser id="nicoBrowser2" type="content" />
+		<browser id="nicoBrowser" height="100" type="content" src="http://suplik-net.sakura.ne.jp/bgmfox/player/bgmfox-player.html" persist="width height" disablehistory="true" />
+		<browser id="nicoBrowser2" type="content" disablehistory="true" />
 
 		<splitter collapse="before">
 			<grippy />
@@ -285,28 +285,28 @@
 				<tab label="&youtubeTab.label;" />
 				<tab label="&mylist;" />
 			</tabs>
-			<tabpanels id="tbplsMainList" flex="1" onselect="onTabSelected(event)">
+			<tabpanels id="tbplsMainList" flex="1" onselect="bgmfoxGlobal.onTabSelected(event)">
 				<!--Playlists-->
 				<tabpanel flex="1">
 					<hbox flex="1">
 
 						<richlistbox id="rlbPlaylists" class="playlists" datasources="rdf:null" ref="http://suplik.net/bgmfox/playlists"
 						             xmlns:playlist="http://suplik.net/bgmfox/playlist#" context="popupPlaylist"
-						             onselect="playlistsManager.onPlaylistSelectionChanged(event)" persist="width"
-						             onkeyup="playlistsManager.onPlaylistsKeyup(event)">
-							<richlistitem value="all" ondragover="playlistsManager.playlistObserver(event)"
-							              ondrop="playlistsManager.playlistObserver(event)"
-							              ondragend="playlistsManager.playlistObserver(event)"
+						             onselect="bgmfoxGlobal.playlistsManager.onPlaylistSelectionChanged(event)" persist="width"
+						             onkeyup="bgmfoxGlobal.playlistsManager.onPlaylistsKeyup(event)">
+							<richlistitem value="all" ondragover="bgmfoxGlobal.playlistsManager.playlistObserver(event)"
+							              ondrop="bgmfoxGlobal.playlistsManager.playlistObserver(event)"
+							              ondragend="bgmfoxGlobal.playlistsManager.playlistObserver(event)"
 							              context="all-playlist-context">
 								<label value="&library;" />
 							</richlistitem>
 							<template>
 								<rule iscontainer="true">
 									<richlistitem uri="rdf:*" context="playlist-context"
-									              ondragstart="playlistsManager.playlistObserver(event)"
-									              ondragover="playlistsManager.playlistObserver(event)"
-									              ondrop="playlistsManager.playlistObserver(event)"
-									              ondragend="playlistsManager.playlistObserver(event)">
+									              ondragstart="bgmfoxGlobal.playlistsManager.playlistObserver(event)"
+									              ondragover="bgmfoxGlobal.playlistsManager.playlistObserver(event)"
+									              ondrop="bgmfoxGlobal.playlistsManager.playlistObserver(event)"
+									              ondragend="bgmfoxGlobal.playlistsManager.playlistObserver(event)">
 										<label value="rdf:http://suplik.net/bgmfox/playlist#name" />
 									</richlistitem>
 								</rule>
@@ -317,7 +317,7 @@
 
 						<!--List view-->
 						<tree id="trPlaylistContents" class="playlistContent" flex="1" datasources="rdf:null" ref="" enableColumnDrag="true"
-						      onkeyup="playlistsManager.onPlaylistContentsKeyup(event)" persist="style">
+						      onkeyup="bgmfoxGlobal.playlistsManager.onPlaylistContentsKeyup(event)" persist="style">
 							<treecols>
 								<treecol id="trclName" class="sortDirectionIndicator" label="&titleTrcl.label;"
 								         primary="true" flex="1" sort="?title" persist="width ordinal hidden" />
@@ -370,14 +370,14 @@
 									</query>
 									<action>
 										<treechildren id="trChildren"
-										              ondblclick="playlistsManager.onPlayListItemDblClicked(event)"
+										              ondblclick="bgmfoxGlobal.playlistsManager.onPlayListItemDblClicked(event)"
 										              context="playlistVideo-context"
-										              ondragstart="playlistsManager.playlistContentObserver(event)"
-										              ondragover="playlistsManager.playlistContentObserver(event)"
-										              ondrop="playlistsManager.playlistContentObserver(event)"
-										              ondragend="playlistsManager.playlistContentObserver(event)"
-										              onmousemove="playlistsManager.onTooltipShowing(event)"
-										              onmouseout="playlistsManager.onTooltipShowing(event)">
+										              ondragstart="bgmfoxGlobal.playlistsManager.playlistContentObserver(event)"
+										              ondragover="bgmfoxGlobal.playlistsManager.playlistContentObserver(event)"
+										              ondrop="bgmfoxGlobal.playlistsManager.playlistContentObserver(event)"
+										              ondragend="bgmfoxGlobal.playlistsManager.playlistContentObserver(event)"
+										              onmousemove="bgmfoxGlobal.playlistsManager.onTooltipShowing(event)"
+										              onmouseout="bgmfoxGlobal.playlistsManager.onTooltipShowing(event)">
 											<treeitem uri="?video" value="?id">
 												<treerow class="trrwPlContent">
 													<treecell label="?title" />
@@ -397,7 +397,7 @@
 
 						<!--Grid view-->
 						<box id="bxGridView" class="gridView" flex="1" datasources="rdf:null" ref="" persist="style"
-						     ondblclick="playlistsManager.onPlayListItemDblClicked(event)">
+						     ondblclick="bgmfoxGlobal.playlistsManager.onPlayListItemDblClicked(event)">
 							<template>
 								<queryset>
 									<query>
@@ -416,13 +416,13 @@
 									<action>
 										<html:div style="max-height: 0px;">
 											<vbox class="thumbnail" uri="?video" flex="1"
-											      ondragstart="playlistsManager.gridViewObserver(event)"
+											      ondragstart="bgmfoxGlobal.playlistsManager.gridViewObserver(event)"
 											      tooltip="tltpGridViewItem"
-											      onmouseover="playlistsManager.onGridViewMouseOver(event)"
-											      onkeyup="playlistsManager.onPlaylistContentsKeyup(event)">
+											      onmouseover="bgmfoxGlobal.playlistsManager.onGridViewMouseOver(event)"
+											      onkeyup="bgmfoxGlobal.playlistsManager.onPlaylistContentsKeyup(event)">
 												<lable class="hidden_elm" value="?id" />
 												<image class="thumbnail" src="?thumbnail_url"
-												       onfocus="gridView.onFocus(event)"
+												       onfocus="bgmfoxGlobal.gridView.onFocus(event)"
 												       context="playlistVideo-context" />
 												<label class="thumbnail small-margin"
 												       onclick="event.target.previousSibling.focus();"
@@ -442,15 +442,15 @@
 				<tabpanel flex="1">
 					<vbox flex="1">
 						<richlistbox id="rlbNiconicoSearchResult" class="searchResult"
-						             ondblclick="onSearchResultDblClicked(event)" context="searchResultContext"
-						             oncontextmenu="ContextPlaylist.setVideo(event)"
-						             onselect="videoManager.selectedItem = event.target" flex="1" />
+						             ondblclick="bgmfoxGlobal.onSearchResultDblClicked(event)" context="searchResultContext"
+						             oncontextmenu="bgmfoxGlobal.ContextPlaylist.setVideo(event)"
+						             onselect="bgmfoxGlobal.videoManager.selectedItem = event.target" flex="1" />
 						<hbox align="center">
 							<button id="btnPrvNicoSrchRlt" disabled="true" label="&prevSrchRltBtn.label;"
-							        oncommand="videoManager.previousNicoSearchResult()"
+							        oncommand="bgmfoxGlobal.videoManager.previousNicoSearchResult()"
 							        tooltiptext="&prevSrchRltBtn.tooltiptext;" />
 							<button id="btnNxtNicoSrchRlt" disabled="true" label="&nextSrchRltBtn.label;"
-							        oncommand="videoManager.nextNicoSearchResult()"
+							        oncommand="bgmfoxGlobal.videoManager.nextNicoSearchResult()"
 							        tooltiptext="&nextSrchRltBtn.tooltiptext;" />
 							<image id="imgNiconicoSearching" class="searching" />
 						</hbox>
@@ -461,15 +461,15 @@
 				<tabpanel flex="1">
 					<vbox flex="1">
 						<richlistbox id="rlbYoutubeSearchResult" class="searchResult"
-						             ondblclick="onSearchResultDblClicked(event)" context="searchResultContext"
-						             oncontextmenu="ContextPlaylist.setVideo(event)"
-						             onselect="videoManager.selectedItem = event.target" flex="1" />
+						             ondblclick="bgmfoxGlobal.onSearchResultDblClicked(event)" context="searchResultContext"
+						             oncontextmenu="bgmfoxGlobal.ContextPlaylist.setVideo(event)"
+						             onselect="bgmfoxGlobal.videoManager.selectedItem = event.target" flex="1" />
 						<hbox align="center">
 							<button id="btnPrvYTSrchRlt" disabled="true" label="&prevSrchRltBtn.label;"
-							        oncommand="videoManager.previousYTSearchResult()"
+							        oncommand="bgmfoxGlobal.videoManager.previousYTSearchResult()"
 							        tooltiptext="&prevSrchRltBtn.tooltiptext;" />
 							<button id="btnNxtYTSrchRlt" disabled="true" label="&nextSrchRltBtn.label;"
-							        oncommand="videoManager.nextYTSearchResult()"
+							        oncommand="bgmfoxGlobal.videoManager.nextYTSearchResult()"
 							        tooltiptext="&nextSrchRltBtn.tooltiptext;" />
 							<image id="imgYoutubeSearching" class="searching" />
 						</hbox>
@@ -481,7 +481,7 @@
 					<hbox flex="1">
 
 						<richlistbox id="rlbMylists" class="playlists" context="popupMylist"
-						             onselect="mylistManager.onPlaylistSelectionChanged(event)" persist="width">
+						             onselect="bgmfoxGlobal.mylistManager.onPlaylistSelectionChanged(event)" persist="width">
 						</richlistbox>
 
 						<splitter class="playlists" />
@@ -491,38 +491,38 @@
 						      persist="style">
 							<treecols>
 								<treecol id="trclName" class="sortDirectionIndicator" label="&titleTrcl.label;"
-								         primary="true" flex="1" persist="width ordinal hidden" onclick="mylistManager.sort(event)" />
+								         primary="true" flex="1" persist="width ordinal hidden" onclick="bgmfoxGlobal.mylistManager.sort(event)" />
 								<splitter class="tree-splitter" />
 								<treecol id="trclThumbnail_url" label="&thumbnailTrcl.label;" flex="1"
 								         persist="width ordinal hidden" />
 								<splitter class="tree-splitter" />
 								<treecol id="trclLength" class="sortDirectionIndicator" label="&timeTrcl.label;"
-								         flex="1" persist="width ordinal hidden" onclick="mylistManager.sort(event)" />
+								         flex="1" persist="width ordinal hidden" onclick="bgmfoxGlobal.mylistManager.sort(event)" />
 								<splitter class="tree-splitter" />
 								<treecol id="trclFirst_retrieve" class="sortDirectionIndicator"
 								         label="&addedTrcl.label;" flex="1"
-								         persist="width ordinal hidden" onclick="mylistManager.sort(event)" />
+								         persist="width ordinal hidden" onclick="bgmfoxGlobal.mylistManager.sort(event)" />
 								<splitter class="tree-splitter" />
 								<treecol id="trclView_counter" class="sortDirectionIndicator" label="&viewsTrcl.label;"
-								         flex="1" persist="width ordinal hidden" onclick="mylistManager.sort(event)" />
+								         flex="1" persist="width ordinal hidden" onclick="bgmfoxGlobal.mylistManager.sort(event)" />
 								<splitter class="tree-splitter" />
 								<treecol id="trclMylist_counter" class="sortDirectionIndicator"
 								         label="&mylistsTrcl.label;" flex="1"
-								         persist="width ordinal hidden" onclick="mylistManager.sort(event)" />
+								         persist="width ordinal hidden" onclick="bgmfoxGlobal.mylistManager.sort(event)" />
 							</treecols>
-							<treechildren id="trchMylist" ondblclick="mylistManager.onMylistItemDblClicked(event)"
+							<treechildren id="trchMylist" ondblclick="bgmfoxGlobal.mylistManager.onMylistItemDblClicked(event)"
 										              context="mylistVideo-context"
-										              ondragstart="mylistManager.mylistContentObserver(event)"
-										              ondragover="mylistManager.mylistContentObserver(event)"
-										              ondrop="mylistManager.mylistContentObserver(event)"
-										              ondragend="mylistManager.mylistContentObserver(event)"
-										              onmousemove="mylistManager.onTooltipShowing(event)"
-										              onmouseout="mylistManager.onTooltipShowing(event)"/>
+										              ondragstart="bgmfoxGlobal.mylistManager.mylistContentObserver(event)"
+										              ondragover="bgmfoxGlobal.mylistManager.mylistContentObserver(event)"
+										              ondrop="bgmfoxGlobal.mylistManager.mylistContentObserver(event)"
+										              ondragend="bgmfoxGlobal.mylistManager.mylistContentObserver(event)"
+										              onmousemove="bgmfoxGlobal.mylistManager.onTooltipShowing(event)"
+										              onmouseout="bgmfoxGlobal.mylistManager.onTooltipShowing(event)"/>
 						</tree>
 
 						<!--Grid view-->
 						<box id="bxMylistGridView" class="gridView" flex="1" persist="style"
-						     ondblclick="mylistManager.onMylistItemDblClicked(event)">
+						     ondblclick="bgmfoxGlobal.mylistManager.onMylistItemDblClicked(event)">
 							<html:div id="divMylistGridView" style="max-height: 0px;">
 							</html:div>
 						</box>
@@ -536,22 +536,22 @@
 	<statusbar align="center">
 		<image id="imgCreatePlaylist" class="control" popup="popupStatusbar"
 		       tooltiptext="&newPlaylistImg.tooltiptext;" />
-		<image id="imgShuffleOff" class="repeat control" onclick="videoManager.onShuffleClicked(event)"
+		<image id="imgShuffleOff" class="repeat control" onclick="bgmfoxGlobal.videoManager.onShuffleClicked(event)"
 		       tooltiptext="&shuffleOffImg.tooltiptext;" persist="style" />
-		<image id="imgShuffleOn" class="repeat control" onclick="videoManager.onShuffleClicked(event)"
+		<image id="imgShuffleOn" class="repeat control" onclick="bgmfoxGlobal.videoManager.onShuffleClicked(event)"
 		       tooltiptext="&shuffleOnImg.tooltiptext;" persist="style" />
-		<image id="imgNoRepeat" class="repeat control" onclick="videoManager.onRepeatClicked(event)"
+		<image id="imgNoRepeat" class="repeat control" onclick="bgmfoxGlobal.videoManager.onRepeatClicked(event)"
 		       tooltiptext="&noRepeatImg.tooltiptext;" persist="style" />
-		<image id="imgOneRepeat" class="repeat control" onclick="videoManager.onRepeatClicked(event)"
+		<image id="imgOneRepeat" class="repeat control" onclick="bgmfoxGlobal.videoManager.onRepeatClicked(event)"
 		       tooltiptext="&oneRepeatImg.tooltiptext;" persist="style" />
-		<image id="imgAllRepeat" class="repeat control" onclick="videoManager.onRepeatClicked(event)"
+		<image id="imgAllRepeat" class="repeat control" onclick="bgmfoxGlobal.videoManager.onRepeatClicked(event)"
 		       tooltiptext="&allRepeatImg.tooltiptext;" persist="style" />
 		<spacer />
 		<label id="lblStatusbar" crop="end" flex="1" />
 		<spacer flex="1" />
-		<image id="imgListView" class="control view" onclick="currentPlaylistManager.changeView(event)"
+		<image id="imgListView" class="control view" onclick="bgmfoxGlobal.currentPlaylistManager.changeView(event)"
 		       tooltiptext="&listViewImg.tooltiptext;" persist="style" />
-		<image id="imgGridView" class="control view" onclick="currentPlaylistManager.changeView(event)"
+		<image id="imgGridView" class="control view" onclick="bgmfoxGlobal.currentPlaylistManager.changeView(event)"
 		       tooltiptext="&gridViewImg.tooltiptext;" persist="style" />
 	</statusbar>
-</window>
+</page>
