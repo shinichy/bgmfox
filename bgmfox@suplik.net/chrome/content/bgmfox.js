@@ -2660,7 +2660,7 @@ with (bgmfoxGlobal) {
 /*  ContextPlaylist object
 
  */
-	var ContextPlaylist = {
+	ns.ContextPlaylist = {
 		XUL_NS: "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
 		popup: null,
 		selectedVideoId: null,
