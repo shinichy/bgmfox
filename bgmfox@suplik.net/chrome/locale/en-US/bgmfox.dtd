@@ -11,6 +11,8 @@
 <!ENTITY updateVideoInfoCmd.label "Update">
 <!ENTITY deleteVideosCmd.label "Delete">
 <!ENTITY openOriginalSiteCmd.label "Open original site">
+<!ENTITY copyVideoUriCmd.label "copy video URL">
+<!ENTITY copyVideoTitleCmd.label "copy video title">
 <!ENTITY newPlaylistCmd.label "New Playlist">
 <!ENTITY newMylistCmd.label "New My list">
 <!ENTITY exportCmd.label "Export Library">

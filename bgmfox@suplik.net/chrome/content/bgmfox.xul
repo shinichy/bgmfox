@@ -30,6 +30,8 @@
 		<command id="cmd_updateVideoInfo" oncommand="bgmfoxGlobal.playlistsManager.onUpdateVideoInfo()"/>
 		<command id="cmd_deleteVideos" oncommand="bgmfoxGlobal.playlistsManager.deleteVideos()"/>
 		<command id="cmd_openOriginalSite" oncommand="bgmfoxGlobal.openOriginalSite()"/>
+		<command id="cmd_copyVideoUri" oncommand="bgmfoxGlobal.copySelectedVideoUri()"/>
+		<command id="cmd_copyVideoTitle" oncommand="bgmfoxGlobal.copySelectedVideoTitle()"/>
 		<!--my list item context-->
 		<command id="cmd_deleteMylistVideos" oncommand="bgmfoxGlobal.mylistManager.deleteVideos()"/>
 		<!--at blank playlist-->
@@ -71,6 +73,8 @@
 			<menuitem label="&updateVideoInfoCmd.label;" command="cmd_updateVideoInfo"/>
 			<menuitem label="&deleteVideosCmd.label;" command="cmd_deleteVideos"/>
 			<menuitem label="&openOriginalSiteCmd.label;" command="cmd_openOriginalSite"/>
+			<menuitem label="&copyVideoUriCmd.label;" command="cmd_copyVideoUri"/>
+			<menuitem label="&copyVideoTitleCmd.label;" command="cmd_copyVideoTitle"/>
 			<menu id="copyToMylist-context" label="&copyToMylistCmd.label;">
 				<menupopup id="mpopupAddToMylist" oncommand="bgmfoxGlobal.playlistsManager.copyToMylist(event)"
 				           onpopupshowing="bgmfoxGlobal.mylistManager.fillMylistsMenuItem('copyToMylist-context')">
@@ -96,6 +100,8 @@
 			</menu>
 			<menuitem label="&deleteVideosCmd.label;" command="cmd_deleteMylistVideos"/>
 			<menuitem label="&openOriginalSiteCmd.label;" command="cmd_openOriginalSite"/>
+			<menuitem label="&copyVideoUriCmd.label;" command="cmd_copyVideoUri"/>
+			<menuitem label="&copyVideoTitleCmd.label;" command="cmd_copyVideoTitle"/>
 		</menupopup>
 
 		<!--Search result context-->
@@ -120,6 +126,8 @@
 				</menupopup>
 			</menu>
 			<menuitem label="&openOriginalSiteCmd.label;" command="cmd_openOriginalSite"/>
+			<menuitem label="&copyVideoUriCmd.label;" command="cmd_copyVideoUri"/>
+			<menuitem label="&copyVideoTitleCmd.label;" command="cmd_copyVideoTitle"/>
 		</menupopup>
 
 		<!--my list item drag popup-->

@@ -19,19 +19,12 @@ with (bgmfoxGlobal) {
 	// global variables
 	//
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	ns.videoManager;
-	ns.playlistsManager;
-	ns.rdfManager;
-	ns.gridView;
-	ns.currentPlaylistManager;
 	ns.console = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 	ns.enumRepeatValues = {noRepeat: 0, oneRepeat: 1, allRepeat: 2};
 	ns.enumTabValues = {bgmfoxPlaylist: 0, nicoSearchResult: 1, ytSearchResult: 2, mylist: 3};
 	ns.enumSortValues = {registerdAscending: 0, titleAscending: 4, titleDescending: 5, addedDateAscending: 7, addedDateDescending: 6, viewCountAscending: 9, viewCountDescending: 8, mylistCountAscending: 15, mylistCountDescending: 14, durationAscending: 17, durationDescending: 16};
 	ns.stsbrMessageQueueCount = 0;
 	ns.queryCount = 0;
-	ns.dsource;
-	ns.scrollingVideoTitle;
 	ns.prefSvc = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
 	ns.dirService = Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties);
 	ns.prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
@@ -43,6 +36,7 @@ with (bgmfoxGlobal) {
 	ns.loginManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
 	ns.mainWindow = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor).getInterface(Components.interfaces.nsIWebNavigation).QueryInterface(Components.interfaces.nsIDocShellTreeItem).rootTreeItem.QueryInterface(Components.interfaces.nsIInterfaceRequestor).getInterface(Components.interfaces.nsIDOMWindow);
 	ns.onTabSelectedEventCount = 0;
+	ns.gClipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
 	///////////////////////////////////////////////////////////////////////////////////
 	//
 	// global functions
@@ -56,7 +50,7 @@ with (bgmfoxGlobal) {
 
 	ns.setToken = function() {
 		var browser = document.getElementById("nicoBrowser2");
-		let html = browser.contentDocument.documentElement.innerHTML
+		let html = browser.contentDocument.documentElement.innerHTML;
 
 		var regExpr = /NicoAPI.token = "([^"]*)"/;
 		var rObj = new RegExp(regExpr);
@@ -72,7 +66,8 @@ with (bgmfoxGlobal) {
 		try {
 			var embeddedDocument = document.getElementById("nicoBrowser").contentDocument;
 			log("onLoad: " + embeddedDocument.location.href);
-			log(document.getElementById("nicoBrowser").webProgress.isLoadingDocument);
+			let isLoadingDocument = document.getElementById("nicoBrowser").webProgress.isLoadingDocument;
+			log("isLoadingDocument: " + isLoadingDocument);
 			if (embeddedDocument.body === null) {
 				document.getElementById("nicoBrowser").reload();
 				setTimeout(onLoad, 3000);
@@ -340,11 +335,24 @@ with (bgmfoxGlobal) {
 		return document.getElementById("tbbxMainList").selectedIndex == 0;
 	};
 
-	ns.openOriginalSite = function() {
-		let contents;
-		let selectedVideoId;
+	ns.copySelectedVideoUri = function() {
+		ns.gClipboardHelper.copyString(_getSelectedVideoUri());
+	};
+
+	ns.copySelectedVideoTitle = function() {
+		ns.getVideoInfo(_getSelectedVideoId(), function(video_info) {
+			if (video_info) {
+				ns.gClipboardHelper.copyString(video_info.title);
+			}
+		})
+	};
+
+	_getSelectedVideoId = function() {
+		var contents;
+		var selectedVideoId;
 
 		switch (document.getElementById("tbbxMainList").selectedIndex) {
+			// playlist
 			case 0:
 				contents = document.getElementById("trPlaylistContents");
 				if (contents.view) {
@@ -367,13 +375,28 @@ with (bgmfoxGlobal) {
 				}
 
 				break;
+			default:
+				throw "illegal tab index";
+		}
+
+		return selectedVideoId;
+	};
+
+	_getSelectedVideoUri = function() {
+		var selectedVideoId = _getSelectedVideoId();
+		if (!selectedVideoId) {
+			throw "selectedVideoId is" + selectedVideoId;
 		}
 
 		if (isNicoVideoId(selectedVideoId)) {
-			mainWindow.getBrowser().addTab("http://www.nicovideo.jp/watch/" + selectedVideoId);
+			return "http://www.nicovideo.jp/watch/" + selectedVideoId;
 		} else {
-			mainWindow.getBrowser().addTab("http://www.youtube.com/watch?v=" + selectedVideoId);
+			return "http://www.youtube.com/watch?v=" + selectedVideoId;
 		}
+	};
+
+	ns.openOriginalSite = function() {
+		mainWindow.getBrowser().addTab(_getSelectedVideoUri());
 	};
 
 	ns.joinItemIds = function(itemIds) {
@@ -456,7 +479,7 @@ with (bgmfoxGlobal) {
 		this.updatingCount = 0;
 		this.isStopped = true;
 		this.forceLogin = false;
-		const markStyle = "font-weight: bold; color: blue;"
+		const markStyle = "font-weight: bold; color: blue;";
 
 		// Methods
 
@@ -592,7 +615,7 @@ with (bgmfoxGlobal) {
 					}
 				}
 			}
-		}
+		};
 
 		this.nextVideo = function() {
 			if (this.currentPlaylist === null) {
@@ -781,7 +804,7 @@ with (bgmfoxGlobal) {
 			document.getElementById("lblRemainingTime").value = "-" + secondsToStr(this.playingVideo.get_duration_seconds() - currentTime);
 
 			if (this.seekingCount === 0 && this.updatingCount > 1) {
-				this.updatingCount = 0
+				this.updatingCount = 0;
 				this.noSeek = true;
 				sclProgress.value = 100 * currentTime / this.playingVideo.get_duration_seconds() * document.getElementById("bxProgress").boxObject.width / sclProgress.width;
 			} else {
@@ -1351,7 +1374,7 @@ with (bgmfoxGlobal) {
 
 		var paragraphs = domDoc.getElementsByTagName("p");
 		for (var j = 0; j < paragraphs.length; j++) {
-			if (paragraphs[j].getAttribute("class") == "font14") {
+			if (paragraphs[j].getAttribute("class") == "font16") {
 				var child = paragraphs[j].getElementsByTagName("a")[0];
 				var rObj = new RegExp("\/([^\/]*)$");
 				child.getAttribute("href").match(rObj);
@@ -1411,7 +1434,7 @@ with (bgmfoxGlobal) {
 					mylistManager.addToMylist(json.id, videoId);
 				}
 			});
-		}
+		};
 
 		that.copyToMylist = function(event) {
 			var videoIds = _getSelectedVideoIds();
@@ -1450,8 +1473,7 @@ with (bgmfoxGlobal) {
 			// set playlist's selected index to previous value.
 			_rebuildPlaylists(
 			                 function() {
-				                 let playlistSelectedIndex = prefBranch.getIntPref("playlist.index");
-				                 rlbPlaylists.selectedIndex = playlistSelectedIndex;
+				                 rlbPlaylists.selectedIndex = prefBranch.getIntPref("playlist.index");
 			                 }
 					);
 		};
@@ -1532,16 +1554,7 @@ with (bgmfoxGlobal) {
 
 				if (!dontRebuild) {
 					_flushDataSource();
-					_rebuildPlaylists(
-						//					function() {
-						//						rdfManager.setPlcDRFunc(
-						//							function() {
-						//								rlbPlaylists.selectedIndex = oldIndex;
-						//							}
-						//						);
-						//						rlbPlaylists.selectedIndex = 0;
-						//					}
-							);
+					_rebuildPlaylists(null);
 				}
 
 				return true;
@@ -1562,7 +1575,7 @@ with (bgmfoxGlobal) {
 				if (func) {
 					func();
 				}
-			}
+			};
 
 			rdfManager.setPlDRFunc(plDRFunc);
 			rlbPlaylists.builder.rebuild();
@@ -1674,16 +1687,6 @@ with (bgmfoxGlobal) {
 				}
 
 				rlbPlaylists.selectedIndex = oldIndex;
-				//
-				//			_rebuildPlaylists(
-				//				function() {
-				//					if (oldIndex >= rlbPlaylists.itemCount) {
-				//						oldIndex = rlbPlaylists.itemCount - 1;
-				//					}
-				//
-				//					rlbPlaylists.selectedIndex = oldIndex;
-				//				}
-				//			);
 			}
 		};
 
@@ -1747,7 +1750,7 @@ with (bgmfoxGlobal) {
 						initRDFC(playlistsUri);
 						let playlists = RDFC.GetElements();
 						while (playlists.hasMoreElements()) {
-							let playlistNode = playlists.getNext().QueryInterface(Ci.nsIRDFResource)
+							let playlistNode = playlists.getNext().QueryInterface(Ci.nsIRDFResource);
 							predicate = RDF.GetResource(playlistPropUri + "name");
 							target = dsource.GetTarget(playlistNode, predicate, true);
 							initRDFC(playlistsUri + "/" + target.QueryInterface(Ci.nsIRDFLiteral).Value);
@@ -1797,7 +1800,7 @@ with (bgmfoxGlobal) {
 			if (playlistsManager.isListView && trPlContents.view) {
 				if (trPlContents.view.rowCount === 0) {
 					trPlContents.view.selection.select(-1);
-				} else if (0 <= oldSelectedVideoIndex && oldSelectedVideoIndex < trPlContents.view.rowCount) {
+				} else if (oldSelectedVideoIndex >= 0 && oldSelectedVideoIndex < trPlContents.view.rowCount) {
 					trPlContents.view.selection.select(oldSelectedVideoIndex);
 				} else if (oldSelectedVideoIndex >= trPlContents.view.rowCount) {
 					trPlContents.view.selection.select(trPlContents.view.rowCount - 1);
@@ -2114,7 +2117,7 @@ with (bgmfoxGlobal) {
 						return;
 					}
 
-					if (0 <= oldTargetIndex && oldTargetIndex < trPlContents.view.rowCount) {
+					if (oldTargetIndex >= 0 && oldTargetIndex < trPlContents.view.rowCount) {
 						trPlContents.view.getItemAtIndex(oldTargetIndex).firstChild.setAttribute("properties", "");
 					}
 
@@ -2322,8 +2325,6 @@ with (bgmfoxGlobal) {
 
 			if (!video) {
 				log("video is null");
-//			that.onPlaylistSelectionChanged();
-//			setTimeout(function() {that.onPlayListItemDblClicked();}, 500);
 				return;
 			}
 
@@ -2356,10 +2357,9 @@ with (bgmfoxGlobal) {
 			try {
 				trPlContents.boxObject.QueryInterface(Ci.nsITreeBoxObject).getCellAt(event.clientX, event.clientY, row, column, part);
 			} catch(e) {
-//			event.preventDefault();
 			}
 
-			if (0 <= row.value && column.value !== null && column.value.id === 'trclThumbnail_url') {
+			if (row.value >= 0 && column.value !== null && column.value.id === 'trclThumbnail_url') {
 				document.getElementById("imgThumbnail").setAttribute("src", trPlContents.view.getItemAtIndex(row.value).firstChild.firstChild.nextSibling.getAttribute("src"));
 				document.getElementById("tltpThumbnail").openPopup(rlbPlaylists, "before_start", 0, 0, false);
 			} else {
@@ -2955,7 +2955,7 @@ with (bgmfoxGlobal) {
 		};
 
 		that.set_selectedIndex = function(index) {
-			if (0 <= index && index < that.get_itemCount()) {
+			if (index >= 0 && index < that.get_itemCount()) {
 				selectedIndex = index;
 			} else {
 				selectedIndex = -1;
@@ -3223,8 +3223,7 @@ with (bgmfoxGlobal) {
 			// set playlist's selected index to previous value.
 			_rebuildPlaylists(
 							 function() {
-								 let playlistSelectedIndex = prefBranch.getIntPref("playlist.index");
-								 rlbPlaylists.selectedIndex = playlistSelectedIndex;
+								 rlbPlaylists.selectedIndex = prefBranch.getIntPref("playlist.index");
 							 }
 					);
 		},
@@ -3463,7 +3462,7 @@ with (bgmfoxGlobal) {
 			if (this.isListView && this.trPlContents.view) {
 				if (this.trPlContents.view.rowCount === 0) {
 					this.trPlContents.view.selection.select(-1);
-				} else if (0 <= oldSelectedVideoIndex && oldSelectedVideoIndex < this.trPlContents.view.rowCount) {
+				} else if (oldSelectedVideoIndex >= 0 && oldSelectedVideoIndex < this.trPlContents.view.rowCount) {
 					this.trPlContents.view.selection.select(oldSelectedVideoIndex);
 				} else if (oldSelectedVideoIndex >= this.trPlContents.view.rowCount) {
 					this.trPlContents.view.selection.select(this.trPlContents.view.rowCount - 1);
@@ -3736,7 +3735,7 @@ with (bgmfoxGlobal) {
 						case enumSortValues.durationDescending:
 							return (b.item_data.length_seconds - a.item_data.length_seconds);
 					}
-				})
+				});
 
 				let treechildren = document.getElementById("trchMylist");
 				for (let i = 0; i < mylistItems.length; i += 1) {
@@ -3787,8 +3786,8 @@ with (bgmfoxGlobal) {
 					let vbox = document.createElement("vbox");
 					vbox.setAttribute("class", "thumbnail");
 					vbox.setAttribute("tooltip", "tltpGridViewItem");
-					vbox.addEventListener("dragstart", mylistManager.gridViewObserver, false)
-					vbox.addEventListener("mouseover", mylistManager.onGridViewMouseOver, false)
+					vbox.addEventListener("dragstart", mylistManager.gridViewObserver, false);
+					vbox.addEventListener("mouseover", mylistManager.onGridViewMouseOver, false);
 
 					let lblVideoId = document.createElement("label");
 					lblVideoId.setAttribute("class", "hidden_elm");
@@ -3799,7 +3798,7 @@ with (bgmfoxGlobal) {
 					image.setAttribute("class", "thumbnail");
 					image.setAttribute("src", thumbnail_url);
 					image.setAttribute("context", "mylistVideo-context");
-					image.addEventListener("focus", mylistManager.gridView.onFocus, false)
+					image.addEventListener("focus", mylistManager.gridView.onFocus, false);
 					vbox.appendChild(image);
 
 					let lblTitle = document.createElement("label");
@@ -3856,7 +3855,7 @@ with (bgmfoxGlobal) {
 			let row = {}, column = {}, part = {};
 			this.trPlContents.boxObject.QueryInterface(Ci.nsITreeBoxObject).getCellAt(event.clientX, event.clientY, row, column, part);
 
-			if (0 <= row.value && column.value !== null && column.value.id === 'trclThumbnail_url') {
+			if (row.value >= 0 && column.value !== null && column.value.id === 'trclThumbnail_url') {
 				document.getElementById("imgThumbnail").setAttribute("src", this.trPlContents.view.getItemAtIndex(row.value).firstChild.firstChild.nextSibling.getAttribute("src"));
 				document.getElementById("tltpThumbnail").openPopup(this.rlbPlaylists, "before_start", 0, 0, false);
 			} else {

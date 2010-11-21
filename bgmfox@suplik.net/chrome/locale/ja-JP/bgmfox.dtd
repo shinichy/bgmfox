@@ -11,6 +11,8 @@
 <!ENTITY updateVideoInfoCmd.label "更新">
 <!ENTITY deleteVideosCmd.label "削除">
 <!ENTITY openOriginalSiteCmd.label "元のサイトを開く">
+<!ENTITY copyVideoUriCmd.label "動画URLをコピー">
+<!ENTITY copyVideoTitleCmd.label "動画タイトルをコピー">
 <!ENTITY newPlaylistCmd.label "新しいプレイリスト">
 <!ENTITY newMylistCmd.label "新しいマイリスト">
 <!ENTITY exportCmd.label "ライブラリをエクスポート">
