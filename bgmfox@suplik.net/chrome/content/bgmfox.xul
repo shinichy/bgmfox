@@ -26,13 +26,13 @@
 		<command id="cmd_renameMylist" oncommand="bgmfoxGlobal.mylistManager.renameMylist()"/>
 		<command id="cmd_openOriginalMylist" oncommand="bgmfoxGlobal.mylistManager.openOriginalMylist()"/>
 		<command id="cmd_copyMylistToBgmfox" oncommand="bgmfoxGlobal.mylistManager.copyToBgmfox()"/>
-		<!--Video context-->
+		<!--playlist Video context-->
 		<command id="cmd_updateVideoInfo" oncommand="bgmfoxGlobal.playlistsManager.onUpdateVideoInfo()"/>
 		<command id="cmd_deleteVideos" oncommand="bgmfoxGlobal.playlistsManager.deleteVideos()"/>
 		<command id="cmd_openOriginalSite" oncommand="bgmfoxGlobal.openOriginalSite()"/>
 		<command id="cmd_copyVideoUri" oncommand="bgmfoxGlobal.copySelectedVideoUri()"/>
 		<command id="cmd_copyVideoTitle" oncommand="bgmfoxGlobal.copySelectedVideoTitle()"/>
-		<!--my list item context-->
+		<!--my list video context-->
 		<command id="cmd_deleteMylistVideos" oncommand="bgmfoxGlobal.mylistManager.deleteVideos()"/>
 		<!--at blank playlist-->
 		<command id="cmd_newPlaylist" oncommand="bgmfoxGlobal.playlistsManager.createPlaylist()"/>
@@ -248,7 +248,7 @@
 			         maxrows="10" completeselectedindex="true" showcommentcolumn="true" tabscrolling="true"
 			         sizetopopup="pref" src="" emptytext="&searchTxtbx.emptytext;" empty="true"
 			         label="&searchTxtbx.label;" tooltiptext="&searchTxtbx.tooltiptext;" clickSelectsAll="true"
-			         onkeyup="bgmfoxGlobal.onKeyup(event)">
+			         onkeypress="bgmfoxGlobal.onKeypress(event)" searchbutton="true">
 				<hbox>
 					<image id="imgSearch" tooltiptext="&searchImg.tooltiptext;"
 					       onclick="bgmfoxGlobal.videoManager.searchVideo()"/>

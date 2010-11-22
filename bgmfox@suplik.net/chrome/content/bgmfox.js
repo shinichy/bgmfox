@@ -270,13 +270,10 @@ with (bgmfoxGlobal) {
 		}
 	};
 
-	/**
-	 * Enterで検索開始したいけど、変換中のEnterでも検索してしまう...
-	 */
-	ns.onKeyup = function(event) {
-//     if (event.keyCode == event.DOM_VK_RETURN || event.keyCode == event.DOM_VK_ENTER) {
-// 	videoManager.searchVideo();
-//     }
+	ns.onKeypress = function(event) {
+		if (event.keyCode == event.DOM_VK_RETURN || event.keyCode == event.DOM_VK_ENTER) {
+			videoManager.searchVideo();
+		}
 	};
 
 
@@ -1768,6 +1765,10 @@ with (bgmfoxGlobal) {
 		};
 
 		that.deleteVideos = function() {
+			if (!prompts.confirm(window, "Remove", "remove video ?")) {
+				return;
+			}
+
 			var oldSelectedPlIndex = rlbPlaylists.selectedIndex;
 			var oldSelectedVideoIndex;
 			var videoIds = new Array();
@@ -3440,6 +3441,10 @@ with (bgmfoxGlobal) {
 		},
 
 		deleteVideos: function() {
+			if (!prompts.confirm(window, "Remove", "remove video ?")) {
+				return;
+			}
+
 			var oldSelectedPlIndex = this.rlbPlaylists.selectedIndex;
 			var oldSelectedVideoIndex;
 			var itemIds = new Array();
