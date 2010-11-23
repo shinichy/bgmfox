@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE page SYSTEM "chrome://bgmfox/locale/bgmfox.dtd">
+
+<prefwindow id="bgmfoxPrefs" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            type="child"
+            title="BGM Fox Preferences"
+            ondialogaccept="onAccept()">
+	<script type="text/javascript" src="chrome://bgmfox/content/prefs.js"/>
+
+	<prefpane onpaneload="onPaneload()" >
+		<preferences>
+			<preference id="extensions.bgmfox.niconicoLoginMail" name="extensions.bgmfox.niconicoLoginMail" type="string" />
+		</preferences>
+		<groupbox>
+			<caption label="&caption.label;" />
+			<hbox>
+				<menulist id="mnlLoginInfo" label="&storedAccounts.label;" persist="selectedIndex"
+				          oncommand="onStoredLoginSelectionChanged(event)">
+				</menulist>
+				<button id="btnSavedPasswords" label="&savedPasswords.label;" onclick="openSavedPasswordsDialog()"></button>
+			</hbox>
+
+			<hbox>
+				<label value="&mailLbl.value;"/>
+				<textbox id="txtbxMail" preference="extensions.bgmfox.niconicoLoginMail" />
+			</hbox>
+			<hbox>
+				<label value="&passwordLbl.value;"/>
+				<textbox id="txtbxPassword" type="password" />
+			</hbox>
+		</groupbox>
+	</prefpane>
+</prefwindow>
